@@ -22,8 +22,6 @@ Out-of-the-box, Flask-Error-Monitor plays nicely with various ORM's, including
 
 - `MongoEngine <http://mongoengine.org/>`_,
 
-- `pymongo <http://api.mongodb.org/python/current/>`_ and
-
 
 It also boasts a simple Model management interface.
 

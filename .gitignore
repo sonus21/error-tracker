@@ -22,7 +22,6 @@ __pycache__/
 *.so
 
 # Distribution / packaging
-.Python
 build/
 develop-eggs/
 dist/
@@ -69,7 +68,7 @@ coverage.xml
 # Django stuff:
 *.log
 local_settings.py
-db.sqlite3
+*.sqlite*
 
 # Flask stuff:
 instance/
@@ -98,7 +97,6 @@ celerybeat-schedule
 
 # Environments
 .env
-.venv
 env/
 venv/
 ENV/
@@ -118,4 +116,3 @@ venv.bak/
 # mypy
 .mypy_cache/
 .idea
-
