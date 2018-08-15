@@ -1,0 +1,4 @@
+Flask==0.12
+Flask-Mail==0.9.1
+Flask-SQLAlchemy==2.2
+pyquery==1.2.17

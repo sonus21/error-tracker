@@ -1,0 +1,4 @@
+include LICENSE.rst
+include README.rst
+recursive-include flask_error/templates *
+recursive-exclude flask_error *.pyc
