@@ -10,8 +10,6 @@ Flask error/exception monitoring app
 Quick start
 ==========
 
-.. _installation-guide:
-
 Installation
 ------------
 

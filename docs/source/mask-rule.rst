@@ -1,12 +1,14 @@
 Masking Rule
 -------------
 
-- Disable masking rule: set APP_ERROR_MASKED_KEY_HAS = None in settings or app
-- To mask other key do
+- Disable masking rule: set :code:`APP_ERROR_MASKED_KEY_HAS = None`
+- To set other mask rule add following lines
 
 .. code::
 
+    #Mask all the variables or dictionary keys which contains from one of the following tuple
     APP_ERROR_MASKED_KEY_HAS = ( 'secret', 'card', 'credit', 'pass' )
+    #Replace value with  `###@@@@@###`
     APP_ERROR_MASK_WITH = "###@@@@@###"
 
 
