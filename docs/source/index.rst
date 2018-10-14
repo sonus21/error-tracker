@@ -4,10 +4,10 @@
    contain the root `toctree` directive.
 
 =============================================================
-Error/Exception recording app for Flask
+Flask error/exception monitoring app
 =============================================================
 
-Quickstart
+Quick start
 ==========
 
 .. _installation-guide:
