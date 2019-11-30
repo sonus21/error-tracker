@@ -2,7 +2,7 @@
 #
 #    Error tracker's flask plugin, this class initialize it's internal state
 #
-#    :copyright: 2018 Sonu Kumar
+#    :copyright: 2019 Sonu Kumar
 #    :license: BSD-3-Clause
 #
 
