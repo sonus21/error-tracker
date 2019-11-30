@@ -5,40 +5,40 @@ Using any data store as easy as implementing all the methods from **ModelMixin**
 
 .. code::
 
-       from flask_error import ModelMixin
+       from error_tracker import ModelMixin
        class CustomModel(ModelMixin):
             objects = {}
 
             @classmethod
-            def delete(cls, rhash):
-                cls.objects.pop(rhash)
+            def delete_entity(cls, rhash):
+                ...
 
             @classmethod
-            def create_or_update(cls, rhash, host, path, method, request_data, exception):
-                count = 1
-                now = datetime.datetime.now()
-                created_on = now
-                exception = exception
-
-                if rhash in cls.objects:
-                    error = cls.objects[rhash]
-                    created_on = error.created_on
-                    exception = error.exception
-                    count = error.count + 1
-                error = Error(rhash, host, path, method, str(request_data),
-                              exception, count, created_on, now)
-                cls.objects[rhash] = error
+            def create_or_update_entity(cls, rhash, host, path, method, request_data, exception_name, traceback):
+                ...
 
             @classmethod
-            def get_all(cls):
-                return cls.objects.values()
+            def get_exceptions_per_page(cls, page_number=1):
+                ...
 
             @classmethod
-            def get(cls, rhash):
-                error = cls.objects.get(rhash, None)
-                return error
+            def get_entity(cls, rhash):
+                ...
 
 
-       # create app with our own model
-       error_manager = AppErrorManager(app=app, model=CustomModel)
+Flask App Usage
+===============
+Create app with the specific model
 
+    .. code::
+
+       error_tracker = AppErrorTracker(app=app, model=CustomModel)
+
+Django App Usage
+================
+
+Add path to the model in settings file as
+
+   .. code::
+
+        APP_ERROR_DB_MODEL = core.CustomModel

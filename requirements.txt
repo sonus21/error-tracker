@@ -1,3 +1,4 @@
-Flask==0.12
-Flask-Mail==0.9.1
-Flask-SQLAlchemy==2.2
+six
+Flask==1.1.1
+Flask-SQLAlchemy==2.4.1
+Django==1.11.26

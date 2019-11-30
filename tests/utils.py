@@ -1,91 +1,92 @@
-import logging
+import datetime
+from collections import namedtuple
 
-from flask import Flask
-from flask import request
-from flask_sqlalchemy import SQLAlchemy
+import six
 
-from flask_error import AppErrorManager
+from error_tracker import ModelMixin, TicketingMixin, NotificationMixin, MaskingMixin
 
-
-class BaseTestMixin(object):
-    log_file = "flask_error_monitor.log"
-    db_prefix = ""
-
-    def get_db_name(self, db_name):
-        if len(self.db_prefix) != 0:
-            return "%s-%s.sqlite" % (self.db_prefix, db_name)
-        raise ValueError
-
-    def _setup(self, db_name):
-        raise NotImplemented
-
-    def setUpApp(self, db_name):
-        db_name = self.get_db_name(db_name)
-        app, db, error_manager = self._setup(db_name)
-        l = logging.getLogger(__name__)
-        formatter = logging.Formatter('%(message)s')
-        fileHandler = logging.FileHandler(self.log_file)
-        fileHandler.setFormatter(formatter)
-        streamHandler = logging.StreamHandler()
-        streamHandler.setFormatter(formatter)
-        l.setLevel(logging.DEBUG)
-        l.addHandler(fileHandler)
-        l.addHandler(streamHandler)
-
-        self.logger = l
-
-        @app.route('/')
-        def index():
-            return u'No Exception!'
-
-        @app.route("/value-error", methods=['GET', 'POST'])
-        def view_value_error():
-            raise ValueError
-
-        @app.route("/post-view", methods=['POST'])
-        def post_view():
-            form = request.form
-            password = "qwerty"
-            secret = "pass"
-            key = "key"
-            foo_secret = "THIS IS SECRET"
-            test_password_test = "test_password_test"
-            TestPassWordTest = "TestPassWordTest"
-            TestSecret = "TESTSECRET"
-            l = [1, 2, 3, 4]
-            t = (1, 2, 3, 4)
-            d = {'test': 100, "1": 1000}
-            print(form, password, secret, key, d, foo_secret,
-                  TestPassWordTest, test_password_test, TestSecret, l, t, d)
-            print(d['KeyError'])
-            return "KeyError"
-
-        @app.errorhandler(500)
-        @error_manager.record_error_required
-        def error_500(e):
-            return u"500", 500
-
-        return app, db, error_manager
-
-    def tearDownApp(self, db):
-        if db:
-            db.drop_all()
-
-    def write(self, data):
-        with open("log.log", "a") as f:
-            f.write("*" * 100)
-            f.write("\n")
-            f.write(str(data))
-            f.write("\n")
-            f.write("*" * 100)
-            f.write("\n")
+Error = namedtuple("Error", "hash, host, path, method, request_data, exception_name,"
+                            " traceback, count, created_on, last_seen")
+paginator = namedtuple("Paginator", "has_next, has_prev, next_num, prev_num, items")
 
 
-class TestCaseMixin(BaseTestMixin):
-    def _setup(self, db_file):
-        app = Flask(__name__)
-        app.config['SQLALCHEMY_DATABASE_URI'] = "sqlite:///%s" % db_file
-        db = SQLAlchemy(app)
-        error_manager = AppErrorManager(app=app, db=db)
-        db.create_all()
-        return app, db, error_manager
+class TestErrorModel(ModelMixin):
+    objects = {}
+
+    @classmethod
+    def delete_entity(cls, rhash):
+        cls.objects.pop(rhash)
+
+    @classmethod
+    def create_or_update_entity(cls, rhash, host, path, method, request_data,
+                                exception_name, traceback):
+        count = 1
+        now = datetime.datetime.now()
+        created_on = now
+        traceback = traceback
+
+        if rhash in cls.objects:
+            error = cls.objects[rhash]
+            created_on = error.created_on
+            exception_name = error.exception_name
+            traceback = error.traceback
+            count = error.count + 1
+        error = Error(rhash, host, path, method, str(request_data),
+                      exception_name, traceback, count, created_on, now)
+        cls.objects[rhash] = error
+        return error
+
+    @classmethod
+    def get_exceptions_per_page(cls, page_number=1):
+        return paginator(False, False, None, None, list(cls.objects.values()))
+
+    @classmethod
+    def get_entity(cls, rhash):
+        error = cls.objects.get(rhash, None)
+        return error
+
+    @classmethod
+    def delete_all(cls):
+        cls.objects = {}
+
+
+class TestNotification(NotificationMixin):
+    def __init__(self, *args, **kwargs):
+        super(TestNotification, self).__init__(*args, **kwargs)
+        self.emails = []
+
+    def notify(self, request, exception,
+               email_subject=None,
+               email_body=None,
+               from_email=None,
+               recipient_list=None):
+        self.emails.append(email_body)
+
+    def clear(self):
+        self.emails = []
+
+    def get_notifications(self):
+        return self.emails
+
+
+class TicketingSystem(TicketingMixin):
+    tickets = []
+
+    def raise_ticket(self, object, request=None):
+        self.tickets.append(object)
+
+    def get_tickets(self):
+        return self.tickets
+
+    def clear(self):
+        self.tickets = []
+
+
+class Masking(MaskingMixin):
+    def __call__(self, key):
+        if isinstance(key, six.string_types):
+            tmp_key = key.lower()
+            for k in self.mask_key_has:
+                if k in tmp_key:
+                    return True, "'%s'" % self.mask_with
+        return False, None

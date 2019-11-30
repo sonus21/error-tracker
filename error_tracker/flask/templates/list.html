@@ -1,0 +1,62 @@
+{% extends 'base.html' %}
+{% block content_block %}
+    {% if error %}
+        <h1 class="text-center alert alert-danger">{{ error }}</h1>
+    {% else %}
+        <h2 class="text-center">Errors Seen</h2>
+        <table class="table table-condensed">
+            <thead>
+            <tr>
+                <th>Host</th>
+                <th>Method</th>
+                <th>Path</th>
+                <th>Exception</th>
+                <th>Last seen</th>
+                <th>Occurrences</th>
+                <th>Action</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for error in errors.items %}
+                <tr>
+                    <td>{{ error.host }}</td>
+                    <td>{{ error.method }}</td>
+                    <td>
+                        <a class="view-link" href="{{ url_for('app_error.view_detail', rhash=error
+						.hash) }}">
+                            {{ error.path[:30] }}
+                            {% if error.path.__len__() > 30 %}
+                                ...
+                            {% endif %}
+                        </a>
+                    </td>
+                    <td>{{ error.exception_name }}</td>
+                    <td>{{ error.last_seen }}</td>
+                    <td>{{ error.count }}</td>
+                    <td>
+                        <a href="{{ url_for('app_error.view_delete', rhash=error.hash) }}"
+                           class="delete btn btn-danger btn-sm">Delete</a>
+                    </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+        {% if prev_url or next_url %}
+            <hr>
+            <div>
+                <div style="margin: 0 auto;text-align: center;">
+                    {% if prev_url %}
+                        <a href="{{ prev_url }}" style="{% if next_url %}margin-right: 10px{% endif %}">
+                            <i class="glyphicon glyphicon-circle-arrow-left"></i> Newer exceptions
+                        </a>
+                    {% endif %}
+                    {% if next_url %}
+                        <a href="{{ next_url }}" style="{% if prev_url %}margin-left: 10px;{% endif %}">
+                            Older exceptions <i class="glyphicon glyphicon-circle-arrow-right"></i>
+                        </a>
+                    {% endif %}
+                </div>
+            </div>
+        {% endif %}
+    {% endif %}
+{% endblock %}

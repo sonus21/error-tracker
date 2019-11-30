@@ -16,7 +16,7 @@ def desc():
     return info
 
 
-file_text = read(fpath('flask_error/__init__.py'))
+file_text = read(fpath('error_tracker/__init__.py'))
 
 
 def grep(attrname):
@@ -26,36 +26,43 @@ def grep(attrname):
 
 
 setup(
-    name='flask-error-monitor',
+    name='error-tracker',
     version=grep('__version__'),
-    url='https://github.com/sonus21/flask-error-monitor/',
-    license='BSD',
+    url='https://github.com/sonus21/error-tracker/',
+    license="BSD-3-Clause",
     author=grep('__author__'),
     author_email=grep('__email__'),
-    description='Simple and Extensible Error Manager framework for Flask',
+    description='Simple and Extensible Error Monitoring/Tracking framework for Python',
+    keywords=['Flask', 'error-tracker', 'exception-tracking', 'exception-monitoring', "Django"],
     long_description=desc(),
-    packages=['flask_error', ],
+    long_description_content_type='text/x-rst',
+    packages=['error_tracker', ],
     include_package_data=True,
+    python_requires=">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, !=3.4.*",
     zip_safe=False,
     platforms='any',
     install_requires=[
         "Flask",
-        "Flask-Mail",
+        "Django",
         "Flask-SQLAlchemy",
+        "six",
     ],
     tests_require=[
-        'pyquery',
-        'nose'
+        "Flask-Mail",
+        'pyquery'
     ],
     classifiers=[
-        'Development Status :: 4 - Beta',
+        'Development Status :: 5 - Production/Stable',
         'Environment :: Web Environment',
         'Intended Audience :: Developers',
-        'License :: OSI Approved :: BSD License',
+        "License :: OSI Approved :: BSD License",
         'Operating System :: OS Independent',
         'Programming Language :: Python',
-        'Topic :: Software Development :: Libraries :: Python Modules',
         'Programming Language :: Python :: 2.7',
-    ],
-    test_suite='nose.collector'
+        'Programming Language :: Python :: 3.5',
+        'Programming Language :: Python :: 3.6',
+        'Programming Language :: Python :: 3.7',
+        'Programming Language :: Python :: 3.8',
+        'Topic :: Software Development :: Libraries :: Python Modules',
+    ]
 )

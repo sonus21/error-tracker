@@ -1,0 +1,34 @@
+{% extends 'base.html' %}
+{% block content_block %}
+	<style>
+		hr {
+			margin-top: 10px !important;
+			margin-bottom: 10px !important;
+		}
+		.row {
+			border: 1px #eee solid;
+			padding: 10px 15px;
+		}
+	</style>
+	{% if error %}
+		<h1 class="text-center alert alert-danger">{{ error }}</h1>
+	{% else %}
+		<h2 class="text-center"><a href="{{ url_for('app_error.view_list') }}">Errors Seen</a></h2>
+		<div class="row">
+			<p><strong>URL:</strong>{{ obj.host[:-1] }}{{ obj.path }}</p>
+			<hr/>
+			<p><strong>Method: </strong>{{ obj.method }}</p>
+			<hr/>
+			<p><strong>First time seen: </strong>{{ obj.created_on }}</p>
+			<hr/>
+			<p><strong>Last seen: </strong>{{ obj.last_seen }}</p>
+			<hr/>
+			<p><strong>Occurrences: </strong>{{ obj.count }}</p>
+			<hr/>
+			<div><strong>Request data: </strong>{{ obj.request_data }}</div>
+			<hr/>
+			<div><strong>Exception detail: </strong><br/>
+				{{ obj.traceback.replace('<', "&lt;").replace('>', "&gt;").replace("\n","<br/>" )|safe}}</div>
+		</div>
+	{% endif %}
+{% endblock %}

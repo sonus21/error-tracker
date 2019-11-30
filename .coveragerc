@@ -1,6 +1,6 @@
 [run]
-omit =
-    *tests.py
+include = error_tracker/*
+omit = *migrations*, *tests*
 
 [report]
 exclude_lines =

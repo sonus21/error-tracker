@@ -14,13 +14,13 @@
 #
 import os
 import sys
-sys.path.insert(0, os.path.abspath('../flask_error'))
+sys.path.insert(0, os.path.abspath('../error_tracker'))
 
 
 # -- Project information -----------------------------------------------------
 
-project = u'flask-error-monitor'
-copyright = u'2018, Sonu Kumar'
+project = u'error-tracker'
+copyright = u'2019, Sonu Kumar'
 author = u'Sonu Kumar'
 
 # The short X.Y version
@@ -107,7 +107,7 @@ html_static_path = ['_static']
 # -- Options for HTMLHelp output ---------------------------------------------
 
 # Output file base name for HTML help builder.
-htmlhelp_basename = 'flask-error-monitordoc'
+htmlhelp_basename = 'error-tracker-doc'
 
 
 # -- Options for LaTeX output ------------------------------------------------
@@ -134,7 +134,7 @@ latex_elements = {
 # (source start file, target name, title,
 #  author, documentclass [howto, manual, or own class]).
 latex_documents = [
-    (master_doc, 'flask-error-monitor.tex', u'flask-error-monitor Documentation',
+    (master_doc, 'error-tracker.tex', u'error-tracker Documentation',
      u'Sonu Kumar', 'manual'),
 ]
 
@@ -144,7 +144,7 @@ latex_documents = [
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
 man_pages = [
-    (master_doc, 'flask-error-monitor', u'flask-error-monitor Documentation',
+    (master_doc, 'error-tracker', u'error-tracker Documentation',
      [author], 1)
 ]
 
@@ -155,8 +155,8 @@ man_pages = [
 # (source start file, target name, title, author,
 #  dir menu entry, description, category)
 texinfo_documents = [
-    (master_doc, 'flask-error-monitor', u'flask-error-monitor Documentation',
-     author, 'flask-error-monitor', 'One line description of project.',
+    (master_doc, 'error-tracker', u'error-tracker Documentation',
+     author, 'error-tracker', 'Error Tracker Modules for Flask, Django and Python',
      'Miscellaneous'),
 ]
 

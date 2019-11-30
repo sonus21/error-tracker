@@ -1,46 +1,54 @@
-.. flake8 documentation master file, created by
-   sphinx-quickstart on Tue Jan 19 07:14:10 2016.
-   You can adapt this file completely to your liking, but it should at least
-   contain the root `toctree` directive.
+=============
+Error Tracker
+=============
 
-=============================================================
-Flask error/exception monitoring app
-=============================================================
+Error Tracker is a python app plugins for Flask and Django, that provides many of the essentials features of system exceptions tracking.
+
+Features
+--------
+  -  Mask all the variables, including dict keys, HTTP request body which contain *password* and  *secret* in their name.
+  -  Recorded exceptions will be visible to the configured path
+  -  Send notification on failures
+  -  Record exceptions with frame data, including local and global variables
+  -  Raise bugs or update ticket in Bug tracking systems.
+  -  Provide customization for notification, context building, ticketing systems and more
+
 
 Quick start
-==========
+===========
 
 Installation
 ------------
 
-To install Flask Error Monitor, open an interactive shell and run:
+To install Error Tracker, open an interactive shell and run:
 
 .. code::
 
-    git clone git@github.com:sonus21/flask-error-monitor.git
-    cd flask-error-monitor
-    python setup.py install
+    pip install error-tracker
 
-User Guide
------------
-.. note::
-  - It will mask all the variables which contain *password* and  *secret* in their name.
-  - Recorded exceptions will be visible to *http://example.com/dev/error*
 
-Using **Flask Error Monitor** as simple as plugging any flask extension. We need to create a new instance of *AppErrorManager* and configure that with the correct data.
-You can use either object or app-based configuration, the only important thing here is we should have all the required key in the app.config dictionary to it to work.
+Error Tracker can be used with
+
+*  Standalone Python application
+*  Flask Application
+*  Django Application
+
+Using **Error Tracker** as simple as plugging any other module.
 
 Recording exception/error
 ^^^^^^^^^^^^^^^^^^^^^^^^^
-An error/exception can be recorded using decorator as well function call.
-- To record the error using decorator, decorate a function with *record_error_required*
-- Where as to record error using function call use  *record_error* function.
+An error/exception can be recorded using decorator or function call.
+- To record the error using decorator, decorate a function with *track_exception* or *auto_track_exception*
+- Where as to record error using function call use  *record_exception* function.
 
-All the data will be stored in the configured data store and these data will be available at */dev/error/*  or at configure URL path.
+All the data will be stored in the configured data store and these data will be available at configure URL path.
 
 
-Example setup
----------------------------
+Flask App setup
+-------------------
+An instance of *AppErrorTracker* needs to be created and have to be configured with the correct data.
+Monitoring feature can be configured either using object based configuration or app-based configuration,
+the only important thing here is we should have all the required key configs in the app.config otherwise it will fail.
 
 For object based configuration add
 **settings.py**
@@ -48,7 +56,7 @@ For object based configuration add
 .. code::
 
     ...
-    APP_ERROR_SEND_EMAIL = True
+    APP_ERROR_SEND_NOTIFICATION = True
     APP_ERROR_RECIPIENT_EMAIL = ('example@example.com',)
     APP_ERROR_SUBJECT_PREFIX = "Server Error"
     APP_ERROR_EMAIL_SENDER = 'user@example.com'
@@ -60,14 +68,22 @@ For object based configuration add
     from flask import Flask
     from flask_mail import Mail
     import settings
-    from flask_error import AppErrorManager
+    from error_tracker import AppErrorTracker, NotificationMixin
     from flask_sqlalchemy import SQLAlchemy
     ...
     app = Flask(__name__)
     app.config.from_object(settings)
     db = SQLAlchemy(app)
-    mail = Mail(app=app)
-    error_manager = AppErrorManager(app=app, db=db, mailer=mail)
+    class Notifier(Mail, NotificationMixin):
+        def notify(self, request, exception,
+                   email_subject=None,
+                   email_body=None,
+                   from_email=None,
+                   recipient_list=None):
+            message = Message(email_subject, recipient_list, email_body, sender=from_email)
+            self.send(message)
+    mailer = Notifier(app=app)
+    error_tracker = AppErrorTracker(app=app, db=db, notifier=mailer)
 
     ....
 
@@ -75,89 +91,74 @@ For object based configuration add
     # Record exception when 404 error code is raised
     @app.errorhandler(403)
     def error_403(e):
-        error_manager.record_error()
-        ...
-        pass
+        error_tracker.record_exception()
+        # any custom logic
 
     # Record error using decorator
     @app.errorhandler(500)
-    @error_manager.record_error_required
+    @error_tracker.track_exception
     def error_500(e):
-        ...
-        pass
+        # some custom logic
     ....
 
-Here, app, db and mailer parameters are optional. Alternatively, you could use the init_app() method.
+Here, app, db and notifier parameters are optional. Alternatively, you could use the init_app() method.
 
 If you start this application and navigate to http://localhost:5000/dev/error, you should see an empty page.
 
+Django App Setup
+----------------
 
+We need to update settings.py file as
 
-Configure at the end
----------------------------
-    Use error_manager.init method to configure
+-  Add app to installed apps list
+-  Add Middleware for exception tracking. This should be added at the end so that it can process exception 1st in the middleware call stack.
+-  Other configs related to notification
 
 .. code::
 
-    error_manager = AppErrorManager()
     ...
-    error_manager.init_app(app=app, db=db, mailer=mail)
+    APP_ERROR_RECIPIENT_EMAIL = ('example@example.com',)
+    APP_ERROR_SUBJECT_PREFIX = "Server Error"
+    APP_ERROR_EMAIL_SENDER = 'user@example.com'
+
+    INSTALLED_APPS = [
+        ...
+        'error_tracker.DjangoErrorTracker'
+    ]
+    MIDDLEWARE = [
+        ...
+        'error_tracker.django.middleware.ExceptionTrackerMiddleWare'
+    ]
 
 
-Config details
---------------
-- Enable or disable email sending feature
-   .. code::
+Using With Python App (NO WEB SERVER)
+-------------------------------------
+Choose either of the preferred framework, flask or Django and configure the app as per their specifications.
+For example, if we want to use Flask then do
 
-     APP_ERROR_SEND_EMAIL = False
-- Email recipient list
-   .. code::
+- Flask App
+    * Create Flask App instance
+    * Create Error Tracker app instance
+    * DO NOT call run method of Flask app instance
+    * To track exception call :code:`error_tracker.record_exception` method
 
-      APP_ERROR_RECIPIENT_EMAIL = None
-- Email subject prefix to be used by email sender
-   .. code::
-
-      APP_ERROR_SUBJECT_PREFIX = ""
-
-- Mask value with following string
-    .. code::
-
-      APP_ERROR_MASK_WITH = "**************"
-- Mask rule
-    App can mask all the variables whose lower case name contains one of the configured string
-    .. code::
-
-        APP_ERROR_MASKED_KEY_HAS = ("password", "secret")
-
-    Above configuration will mask the variable names like
-     .. code::
-
-        password
-        secret
-        PassWord
-        THis_Is_SEcret
-
-    Any variable names whose lower case string contains either *password* or *secret*
-
-
-- Browse link in your service app
-    List of exceptions can be seen at */dev/error*, but you can have other prefix as well due to some securities or other reasons.
-    .. code::
-
-        APP_ERROR_URL_PREFIX = "/dev/error"
-
-- Email error sender used to construct Message object
-    .. code::
-
-        APP_ERROR_EMAIL_SENDER = None
+- Django App
+    * Create Django App with settings and all configuration
+    * Set environment variable  **DJANGO_SETTINGS_MODULE**
+    * call :code:`django.setup()`
+    * :code:`from error_tracker.django.middleware import error_tracker`
+    * To track exception do :code:`error_tracker.record_exception(None, exception)`
 
 
 .. toctree::
-    :maxdepth: 2
 
-    Persistence Store <datastore>
-    Email Sender <mail>
+    Flask App <flask-app>
+    Django App <django-app>
+    Notification Sender <notification>
+    Raise or Update BUG <ticketing>
     Masking <mask-rule>
+    Custom Context Provider <context-builder>
+    Persistence Store <datastore>
 
 .. automodule::
-    flask_error
+    error_tracker

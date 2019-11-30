@@ -1,7 +1,9 @@
 Masking Rule
 -------------
+Masking is essential for any system so that sensitive information can't be exposed in plain text form.
+Flask error monitor provides masking feature, that can be disabled or enabled.
 
-- Disable masking rule: set :code:`APP_ERROR_MASKED_KEY_HAS = None`
+- Disable masking rule: set :code:`APP_ERROR_MASKED_KEY_HAS = ()`
 - To set other mask rule add following lines
 
 .. code::
@@ -12,54 +14,42 @@ Masking Rule
     APP_ERROR_MASK_WITH = "###@@@@@###"
 
 
+.. note::
+    - Masking is performed for each variable like dict, list, set and all and it's done based on the *variable name*
+    - Masking is performed on the dictionary key as well as e.g. *ImmutableMultiDict*, *QueryDict* standard dict or any object whose super class is dict.
 
-
+**Custom masking rule using MaskingMixin**
 
 .. note::
-    - Masking is performed for each variable like dict, list, set and all.
-    - Masking is performed on the dictionary key as well as e.g. *ImmutableMultiDict*, standard dict or any object whose super class is dict.
-
-###################
-Custom masking rule
-###################
-
-Using MaskableMixin
-^^^^^^^^^^^^^^^^^^^
-
-implement __call__ method of
+    implement __call__ method of MaskingMixin
 
 .. code::
 
-        from flask_error import MaskableMixin
-        class MyMaskable(MaskableMixin):
+        from error_tracker import MaskingMixin
+        class MyMaskingRule(MaskingMixin):
             def __call__(self, key):
                 # Put any logic
-                # Do not mask return False,None
+                # Do not mask return False, None
                 # To mask return True, Value
 
-        # create app as
-        ...
-        app = Flask(__name__)
-        db = SQLAlchemy(app)
-        error_manager = AppErrorManager(app=app, db=db, maskable=MyMaskable("#########", ('pass', 'card') ) )
-        db.create_all()
-        return app, db, error_manager
-        ...
 
 
-Using function
-^^^^^^^^^^^^^^
+Flask App Usage
+===============
+
 .. code::
 
-    def mask(key):
-        # Put any logic
-        # Do not mask return False,None
-        # To mask return True, Value
+        error_tracker = AppErrorTracker(app=app, db=db,
+                                         masking=MyMaskingRule("#########", ('pass', 'card') ) )
 
-    # create app as
-    ...
-    app = Flask(__name__)
-    db = SQLAlchemy(app)
-    error_manager = AppErrorManager(app=app, db=db, maskable=mask )
-    db.create_all()
-    return app, db, error_manager
+
+Django App Usage
+================
+
+**settings.py**
+
+.. code::
+
+    APP_ERROR_MASKING_MODULE="path to MyMaskingRule"
+    APP_ERROR_MASKED_KEY_HAS = ('pass', 'card')
+    APP_ERROR_MASKED_WITH = "############"

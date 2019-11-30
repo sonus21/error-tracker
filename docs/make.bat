@@ -9,7 +9,7 @@ if "%SPHINXBUILD%" == "" (
 )
 set SOURCEDIR=source
 set BUILDDIR=build
-set SPHINXPROJ=flask-error-monitor
+set SPHINXPROJ=error-tracker
 
 if "%1" == "" goto help
 
