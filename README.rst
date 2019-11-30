@@ -1,8 +1,8 @@
-==============================
+=============
 Error Tracker
-==============================
+=============
 
-Full featured error tracking module for Python apps supports Flask and Django
+**Full featured error tracking module for Python apps supports Flask and Django**
 
 .. image:: https://travis-ci.org/sonus21/error-tracker.svg?branch=master
     :target: https://travis-ci.org/sonus21/error-tracker
@@ -179,7 +179,7 @@ You should see output similar to::
 
     .............................................
     ----------------------------------------------------------------------
-    Ran 29 tests in 1.144s
+    Ran 31 tests in 1.144s
 
     OK
 
