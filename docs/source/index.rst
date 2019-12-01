@@ -14,6 +14,18 @@ Features
   -  Provide customization for notification, context building, ticketing systems and more
 
 
+**Exception Listing**
+
+.. image:: images/home.png
+  :alt: Exception listing
+
+**Detailed Exception**
+
+.. image:: images/detail-page.png
+    :alt: Detailed Exception page
+
+
+
 Quick start
 ===========
 
@@ -36,7 +48,7 @@ Error Tracker can be used with
 Using **Error Tracker** as simple as plugging any other module.
 
 Recording exception/error
-^^^^^^^^^^^^^^^^^^^^^^^^^
+-------------------------
 An error/exception can be recorded using decorator or function call.
 - To record the error using decorator, decorate a function with *track_exception* or *auto_track_exception*
 - Where as to record error using function call use  *record_exception* function.
@@ -113,6 +125,7 @@ We need to update settings.py file as
 -  Add app to installed apps list
 -  Add Middleware for exception tracking. This should be added at the end so that it can process exception 1st in the middleware call stack.
 -  Other configs related to notification
+-  Add URLs to the list of URL patterns
 
 .. code::
 
@@ -131,6 +144,17 @@ We need to update settings.py file as
     ]
 
 
+We need to add URLs to the urls.py so that we can browse the default pages provided by Error Tracker
+
+.. code::
+
+    from error_tracker.django import urls
+
+    urlpatterns = [
+        ...
+        url("dev/", include(urls)),
+    ]
+
 Using With Python App (NO WEB SERVER)
 -------------------------------------
 Choose either of the preferred framework, flask or Django and configure the app as per their specifications.
@@ -148,6 +172,7 @@ For example, if we want to use Flask then do
     * call :code:`django.setup()`
     * :code:`from error_tracker.django.middleware import error_tracker`
     * To track exception do :code:`error_tracker.record_exception(None, exception)`
+
 
 
 .. toctree::

@@ -87,6 +87,7 @@ Decorator based exception recording, record exception as it occurs in a method c
 
 
 .. code::
+
     error_tracker = AppErrorTracker(...)
     @error_tracker.auto_track_exception
     def fun():
