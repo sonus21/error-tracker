@@ -50,15 +50,16 @@ Using **Error Tracker** as simple as plugging any other module.
 Recording exception/error
 -------------------------
 An error/exception can be recorded using decorator or function call.
-- To record the error using decorator, decorate a function with *track_exception* or *auto_track_exception*
-- Where as to record error using function call use  *record_exception* function.
+
+- To record the error using decorator, decorate a function with :code:`track_exception` or :code:`auto_track_exception`
+- Where as to record error using function call use  :code:`record_exception` function.
 
 All the data will be stored in the configured data store and these data will be available at configure URL path.
 
 
 Flask App setup
 -------------------
-An instance of *AppErrorTracker* needs to be created and have to be configured with the correct data.
+An instance of :code:`AppErrorTracker` needs to be created and have to be configured with the correct data.
 Monitoring feature can be configured either using object based configuration or app-based configuration,
 the only important thing here is we should have all the required key configs in the app.config otherwise it will fail.
 
@@ -122,10 +123,12 @@ Django App Setup
 
 We need to update settings.py file as
 
--  Add app to installed apps list
--  Add Middleware for exception tracking. This should be added at the end so that it can process exception 1st in the middleware call stack.
+-  Add app :code:`error_tracker.DjangoErrorTracker`   to installed apps list
+-  Add Middleware :code:`error_tracker.django.middleware.ExceptionTrackerMiddleWare` for exception tracking [1]_.
 -  Other configs related to notification
 -  Add URLs to the list of URL patterns
+
+.. [1] This should be added at the end so that it can process exception 1st in the middleware call stack.
 
 .. code::
 
