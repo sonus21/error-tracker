@@ -8,14 +8,17 @@ from error_tracker import AppErrorTracker, NotificationMixin, TicketingMixin
 
 
 class Notifier(Mail, NotificationMixin):
+    def __init__(self, *args, **kwargs):
+        Mail.__init__(self, *args, **kwargs)
+        NotificationMixin.__init__(self, *args, **kwargs)
+
     def notify(self, request, exception,
                email_subject=None,
                email_body=None,
                from_email=None,
                recipient_list=None):
         message = Message(email_subject, recipient_list, email_body, sender=from_email)
-        # send message
-        # self.send(message)
+        #self.send(message)
 
 
 class Ticketing(TicketingMixin):

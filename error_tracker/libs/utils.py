@@ -52,12 +52,14 @@ def get_context_detail(request, masking, context_builder):
 
 
 def get_notification_subject(notification_subject_prefix, method, url, exception):
-    if notification_subject_prefix:
-        subject = "[%s][%s] %s" % (notification_subject_prefix, method, url)
-    else:
+    if notification_subject_prefix and method:
+        subject = "[%s] [%s] %s" % (notification_subject_prefix, method, url)
+    elif method:
         subject = "[%s] %s" % (method, url)
+    else:
+        subject = "[%s]" % notification_subject_prefix if notification_subject_prefix else ""
     if exception:
-        subject = "[%s] %s" % (exception, subject)
+        subject = "%s %s" % (subject, exception)
     return subject
 
 

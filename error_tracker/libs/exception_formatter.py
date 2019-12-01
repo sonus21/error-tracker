@@ -172,12 +172,11 @@ def format_exception(tb, max_elements=1000,
     return op
 
 
-def print_exception():
+def print_exception(masking=None, file=sys.stderr):
     """
     Print traceback in formatted format
     :return:  None
     """
     ty, val, tb = sys.exc_info()
-    string = format_exception(tb)
-    print(string)
-    traceback.print_tb(tb)
+    string = format_exception(tb, masking=masking)
+    print(string, file=file)

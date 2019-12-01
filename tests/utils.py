@@ -60,7 +60,7 @@ class TestNotification(NotificationMixin):
                email_body=None,
                from_email=None,
                recipient_list=None):
-        self.emails.append(email_body)
+        self.emails.append((email_subject, email_body))
 
     def clear(self):
         self.emails = []

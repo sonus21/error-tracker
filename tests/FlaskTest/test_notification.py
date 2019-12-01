@@ -41,6 +41,9 @@ class NotificationConfigurationTests(object):
             result = c.get('/value-error')
             self.assertEqual(u'500', result.data.decode('utf-8'))
             self.assertEqual(len(self.mailer.get_notifications()), 1)
+            notification = self.mailer.get_notifications()[0]
+            self.assertTrue(
+                notification[0].startswith("[" + notification_config_enabled.APP_ERROR_SUBJECT_PREFIX + "]"))
             c.get('/value-error')
             self.assertEqual(len(self.mailer.get_notifications()), 2)
 

@@ -152,6 +152,8 @@ class AppErrorTracker(object):
 
             if subject_prefix in [None, ""]:
                 warn("APP_ERROR_SUBJECT_PREFIX is not set in the app config")
+            else:
+                self.notification_subject_prefix = subject_prefix
 
     def teardown(self, exception):
         pass
