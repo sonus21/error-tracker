@@ -158,7 +158,7 @@ To run the examples on your local environment, one at a time, do something like:
 
 Django::
 
-    cd error-tracker/examples
+     cd error-tracker/examples
      cd DjangoSample
      python manage.py runserver
 

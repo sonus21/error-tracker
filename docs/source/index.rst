@@ -53,6 +53,7 @@ An error/exception can be recorded using decorator or function call.
 
 - To record the error using decorator, decorate a function with :code:`track_exception` or :code:`auto_track_exception`
 - Where as to record error using function call use  :code:`record_exception` function.
+- Exception detail can be written to a file, console or logger etc call method :code:`print_exception`
 
 All the data will be stored in the configured data store and these data will be available at configure URL path.
 
