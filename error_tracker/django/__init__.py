@@ -2,21 +2,20 @@
 #
 #    Django components
 #
-#    :copyright: 2019 Sonu Kumar
+#    :copyright: 2020 Sonu Kumar
 #    :license: BSD-3-Clause
 #
 
 
-from .utils import DefaultDjangoContextBuilder, DjangoNotification
-from .settings import APP_ERROR_MASKED_KEY_HAS, APP_ERROR_MASK_WITH, APP_ERROR_RECIPIENT_EMAIL, \
-    APP_ERROR_EMAIL_SENDER, get
+from .utils import DefaultDjangoContextBuilder, DjangoNotification, DefaultDjangoViewPermission
+from .settings import *
 
 from .utils import DjangoNotification, DefaultDjangoContextBuilder
 from error_tracker.libs.utils import Masking, get_class_from_path, get_class_instance
-from error_tracker import ModelMixin, MaskingMixin, TicketingMixin, NotificationMixin, ContextBuilderMixin
+from error_tracker import ModelMixin, MaskingMixin, TicketingMixin, NotificationMixin, ContextBuilderMixin, \
+    ViewPermissionMixin
 from django.apps import apps as django_apps
 import warnings
-from .settings import *  # noqa
 
 
 def get_exception_model():
@@ -68,4 +67,6 @@ def get_context_builder():
                               DefaultDjangoContextBuilder, "ContextBuilder")
 
 
-
+def get_view_permission():
+    return get_class_instance(APP_ERROR_VIEW_PERMISSION, ViewPermissionMixin, DefaultDjangoViewPermission,
+                              "ViewPermission")

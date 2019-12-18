@@ -2,14 +2,14 @@
 #
 #    Basic test case test, this tests basic part of application
 #
-#    :copyright: 2019 Sonu Kumar
+#    :copyright: 2020 Sonu Kumar
 #    :license: BSD-3-Clause
 #
 import unittest
 
 from django.test import LiveServerTestCase
 from util import TestBase
-from error_tracker.django.middleware import error_tracker, track_exception
+from error_tracker import track_exception, capture_exception, capture_message, configure_scope
 
 
 class RecordErrorTest(LiveServerTestCase, TestBase):
@@ -29,7 +29,7 @@ class RecordErrorTest(LiveServerTestCase, TestBase):
         print(d['KeyError'])
         return "KeyError"
 
-    def verify(self):
+    def verify(self, data="{}"):
         errors = self.get_exceptions()
         self.assertEqual(len(errors), 1)
         error = errors[-1]
@@ -38,7 +38,7 @@ class RecordErrorTest(LiveServerTestCase, TestBase):
         self.assertEqual(error.method, '')
         self.assertEqual(error.path, "")
         self.assertEqual(error.host, "")
-        self.assertEqual(error.request_data, "{}")
+        self.assertEqual(error.request_data, data)
         self.assertIsNotNone(error.traceback)
         self.assertIsNotNone(error.created_on)
         self.assertIsNotNone(error.last_seen)
@@ -59,8 +59,39 @@ class RecordErrorTest(LiveServerTestCase, TestBase):
         try:
             self.throw()
         except Exception as e:
-            error_tracker.record_exception(None, e)
+            capture_exception(None, e)
         self.verify()
+
+    def test_message(self):
+        try:
+            self.throw()
+        except Exception:
+            capture_message("Something went wrong.")
+        self.verify(data="{'context': {'message': 'Something went wrong.'}}")
+
+    def test_additional_context(self):
+        with configure_scope() as f:
+            f.set_extra("id", 1234)
+            self.throw()
+        self.verify(data="{'context': {'id': 1234}}")
+
+    def test_context_manager_exception_not_handled(self):
+        try:
+            with configure_scope(handle_exception=False) as f:
+                f.set_extra("id", 1234)
+                self.throw()
+            self.assertTrue(False)
+        except Exception:
+            self.verify(data="{'context': {'id': 1234}}")
+            pass
+
+    def test_context_manager_with_initial_context(self):
+        try:
+            with configure_scope(context={"id": 1234}) as f:
+                self.throw()
+            self.assertTrue(False)
+        except Exception:
+            self.verify(data="{'context': {'id': 1234}}")
 
 
 if __name__ == '__main__':

@@ -2,7 +2,7 @@
 #
 #    Test's util class
 #
-#    :copyright: 2019 Sonu Kumar
+#    :copyright: 2020 Sonu Kumar
 #    :license: BSD-3-Clause
 #
 
@@ -13,6 +13,7 @@ from flask_sqlalchemy import SQLAlchemy
 from unittest import TestCase
 
 from error_tracker import AppErrorTracker
+from tests.utils import ViewPermission
 
 
 class BaseTestMixin(TestCase):
@@ -95,7 +96,7 @@ class TestCaseMixin(BaseTestMixin):
             app.config.from_object(self.config_module)
         app.config['SQLALCHEMY_DATABASE_URI'] = "sqlite:///%s" % db_file
         db = SQLAlchemy(app)
-        error_tracker = AppErrorTracker(app=app, db=db, **self.kwargs)
+        error_tracker = AppErrorTracker(app=app, db=db, view_permission=ViewPermission(), **self.kwargs)
         db.drop_all()
         db.create_all()
         return app, db, error_tracker

@@ -2,7 +2,7 @@
 #
 #    Exception formatter mixin classes
 #
-#    :copyright: 2019 Sonu Kumar
+#    :copyright: 2020 Sonu Kumar
 #    :license: BSD-3-Clause
 #
 
@@ -135,7 +135,8 @@ class ContextBuilderMixin(object):
         pass
 
     @abc.abstractmethod
-    def get_context(self, request, masking=None):
+    def get_context(self, request, masking=None,
+                    additional_context=None):
         raise NotImplementedError
 
 
@@ -155,5 +156,18 @@ class TicketingMixin(object):
         :param exception: exception model object
         :param  request: current request
         :return: None
+        """
+        raise NotImplementedError
+
+
+class ViewPermissionMixin(object):
+    __metaclass__ = abc.ABCMeta
+
+    @abc.abstractmethod
+    def __call__(self, request):
+        """
+        Check whether user has the permission to view the request
+        :param request: request object
+        :return: True/False
         """
         raise NotImplementedError

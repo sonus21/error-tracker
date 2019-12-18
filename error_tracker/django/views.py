@@ -2,19 +2,31 @@
 #
 #    Django error tracker default value
 #
-#    :copyright: 2019 Sonu Kumar
+#    :copyright: 2020 Sonu Kumar
 #    :license: BSD-3-Clause
 #
-from django.http import Http404
+from django.http import Http404, HttpResponse
 from django.shortcuts import redirect, render
 from django.urls import reverse
 from django.views.decorators.http import require_GET
-from error_tracker.django import get_exception_model
+from error_tracker.django import get_exception_model, get_view_permission
 
 model = get_exception_model()
 
+view_permission = get_view_permission()
+
+
+def has_view_permission(func):
+    def wrapper(request, *args, **kwargs):
+        if view_permission(request):
+            return func(request, *args, **kwargs)
+        return HttpResponse(status=401)
+
+    return wrapper
+
 
 @require_GET
+@has_view_permission
 def view_list(request):
     """
     Home page that lists mose recent exceptions
@@ -39,6 +51,7 @@ def view_list(request):
 
 
 @require_GET
+@has_view_permission
 def delete_exception(request, rhash):
     """
     Delete an exceptions
@@ -51,6 +64,7 @@ def delete_exception(request, rhash):
 
 
 @require_GET
+@has_view_permission
 def detail(request, rhash):
     """
     Display a specific page of the exception

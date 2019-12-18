@@ -2,7 +2,7 @@
 #
 #    Django error tracker default settings
 #
-#    :copyright: 2019 Sonu Kumar
+#    :copyright: 2020 Sonu Kumar
 #    :license: BSD-3-Clause
 #
 
@@ -42,3 +42,5 @@ APP_ERROR_NOTIFICATION_MODULE = get('APP_ERROR_NOTIFICATION_MODULE', None)
 APP_ERROR_CONTEXT_BUILDER_MODULE = get('APP_ERROR_CONTEXT_BUILDER_MODULE', None)
 # In case of different database model, provide path to that
 APP_ERROR_DB_MODEL = get('APP_ERROR_DB_MODEL', None)
+# Check error views are visible to others or not
+APP_ERROR_VIEW_PERMISSION = get('APP_ERROR_VIEW_PERMISSION', None)

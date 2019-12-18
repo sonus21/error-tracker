@@ -67,7 +67,13 @@ Config details
 
 Manual Exception Tracking
 ~~~~~~~~~~~~~~~~~~~~~~~~~
-Error can be tracked programmatically using AppErrorTracker's record_exception method.
+Error can be tracked programmatically using AppErrorTracker's capture_exception method.
+ErrorTracker provides many ways to capture error.
+
+Capture Error using `capture_exception` method
+`capture_exception` takes another parameter for `additional_context`  (dictionary of key value pairs).
+This parameter can be used to provide additional details about the failure.
+
 
 .. code::
 
@@ -76,19 +82,56 @@ Error can be tracked programmatically using AppErrorTracker's record_exception m
     try
         ...
     catch Exception as e:
-        error_tracker.record_exception()
+        error_tracker.capture_exception()
 
+
+A simple Message can be captured using `capture_message` method.
+
+
+.. code::
+
+    try
+        ...
+    catch Exception as e:
+        error_tracker.capture_message("Something went wrong!")
 
 
 Decorator based exception recording, record exception as it occurs in a method call.
 
 .. note::
     Exception will be re-raised so it must be caught in the caller or ignored.
+    Raised exception can be ignored by passing `silent=True`.
+    Also more context detail can be provided using `additional_context` parameter.
 
 
 .. code::
 
-    error_tracker = AppErrorTracker(...)
     @error_tracker.auto_track_exception
     def fun():
         pass
+
+
+So far, you have seen only uses where context is provided upfront using default context builder or some other means.
+Sometimes, we need to put context based on the current code path, like add user_id and email in login flow.
+ErrorTracker comes with context manager that can be used for such use cases.
+
+.. code::
+
+    from error_tracker import flask_scope
+
+    with flask_scope() as scope:
+        scope.set_extra("user_id", 1234)
+        scope.set_extra("email", "example@example.com" )
+
+
+Now error_tracker will automatically capture exception as it will occur. This data will be stored in request_data detail as
+
+.. code::
+
+    {
+       ...
+        "context" : {
+            "id" : 1234,
+            "email" :  "example@example.com"
+        }
+    }
