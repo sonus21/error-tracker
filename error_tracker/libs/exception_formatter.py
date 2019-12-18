@@ -179,4 +179,4 @@ def print_exception(masking=None, file=sys.stderr):
     """
     ty, val, tb = sys.exc_info()
     string = format_exception(tb, masking=masking)
-    print(string, file=file)
+    file.write(string)
