@@ -17,7 +17,7 @@ from FlaskTest.test_notification import NotificationDisabledTest, NotificationEn
 from FlaskTest.test_ticketing import TicketingTest
 from FlaskTest.test_url_prefix import UrlPrefixTest
 from FlaskTest.test_manual_error_tracking import RecordErrorTest
-
+from FlaskTest.test_401_views import View401Test
 
 loader = unittest.TestLoader()
 suite = loader.loadTestsFromTestCase(BasicTest)
@@ -35,6 +35,7 @@ suite.addTests(loader.loadTestsFromTestCase(NotificationEnabledByAppInstanceTest
 suite.addTests(loader.loadTestsFromTestCase(NotificationDisabledTest))
 suite.addTests(loader.loadTestsFromTestCase(TicketingTest))
 suite.addTests(loader.loadTestsFromTestCase(UrlPrefixTest))
+suite.addTests(loader.loadTestsFromTestCase(View401Test))
 
 # initialize a runner, pass it your suite and run it
 runner = unittest.TextTestRunner(verbosity=2)

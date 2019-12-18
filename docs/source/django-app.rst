@@ -94,33 +94,85 @@ Setting details
     .. note::
         Class must implements all abstract methods
 
+- Exception Listing page permission
+    By default exception listing is enabled for only admin users.
+
+
+    .. code::
+
+        APP_ERROR_VIEW_PERMISSION = 'permission.ErrorViewPermission'
+
+    .. note::
+        Class must not have any constructor parameters and should implement __call__ method.
+
 
 Manual Exception Tracking
 ~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Error can be tracked programmatically using ErrorTracker's object available in middleware module. For tracking exception call
-error_tracker.record_exception method.
+Error can be tracked programmatically using `ErrorTracker`'s utility methods available in error_tracker module.
+For tracking exception call `capture_exception` method.
 
 .. code::
 
-    from error_tracker.django.middleware import error_tracker
+    from error_tracker import capture_exception
 
     ...
     try
         ...
     catch Exception as e:
-        error_tracker.record_exception(request, e)
+        capture_exception(request=request, exception=e)
+
+
+A message can be captured using `capture_message` method.
+
+.. code::
+
+    from error_tracker import capture_message
+
+    try
+        ...
+    catch Exception as e:
+        capture_message("Something went wrong", request=request, exception=e)
+
+
+
 
 Decorator based exception recording, record exception as it occurs in a method call.
 
 .. note::
     Exception will be re-raised so it must be caught in the caller or ignored.
+    Re-raising of exception can be disabled using `silent=True` parameter
 
 .. code::
 
-    from error_tracker.django.middleware import track_exception
+    from error_tracker import track_exception
 
     @track_exception
     def do_something():
         ...
 
+So far, you have seen only uses where context is provided upfront using default context builder or some other means.
+Sometimes, we need to put context based on the current code path, like add user_id and email in login flow.
+ErrorTracker comes with context manager that can be used for such use cases.
+
+.. code::
+
+    from error_tracker import configure_scope
+
+    with configure_scope(request=request) as scope:
+        scope.set_extra("user_id", 1234)
+        scope.set_extra("email", "example@example.com"
+
+
+In this case whenever exception would be raised, it will capture the exception automatically and these context details would be stored as well.
+
+
+.. code::
+
+    {
+       ...
+        "context" : {
+            "id" : 1234,
+            "email" :  "example@example.com"
+        }
+    }

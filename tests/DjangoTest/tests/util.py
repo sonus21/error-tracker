@@ -1,3 +1,11 @@
+# -*- coding: utf-8 -*-
+#
+#    Test utils
+#
+#    :copyright: 2020 Sonu Kumar
+#    :license: BSD-3-Clause
+#
+
 from error_tracker.django import get_exception_model
 from error_tracker.django.middleware import notifier
 
@@ -20,12 +28,14 @@ class TestBase(object):
 
     def get(self, path, **kwargs):
         try:
-            return self.client.get(path, **kwargs).content
-        except Exception:
+            return self.client.get(path, **kwargs)
+        except Exception as e:
+            print(e)
             return None
 
     def post(self, path, **kwargs):
         try:
-            return self.client.post(path, **kwargs).content
-        except Exception:
+            return self.client.post(path, **kwargs)
+        except Exception as e:
+            print(e)
             return None

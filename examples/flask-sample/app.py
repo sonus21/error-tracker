@@ -18,7 +18,7 @@ class Notifier(Mail, NotificationMixin):
                from_email=None,
                recipient_list=None):
         message = Message(email_subject, recipient_list, email_body, sender=from_email)
-        #self.send(message)
+        self.send(message)
 
 
 class Ticketing(TicketingMixin):
@@ -60,7 +60,7 @@ def die():
 
 @app.errorhandler(401)
 def error_401(e):
-    app_error.record_exception()
+    app_error.capture_exception()
     return render_template('401.html'), 401
 
 

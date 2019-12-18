@@ -2,3 +2,4 @@ six
 Flask==1.1.1
 Flask-SQLAlchemy==2.4.1
 Django==1.11.26
+djangorestframework

@@ -1,3 +1,11 @@
+# -*- coding: utf-8 -*-
+#
+#    Test no masking feature
+#
+#    :copyright: 2020 Sonu Kumar
+#    :license: BSD-3-Clause
+#
+
 import re
 
 from django.test import TestCase

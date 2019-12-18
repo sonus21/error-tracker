@@ -3,11 +3,9 @@
 import os
 import sys
 
-import sys
-print sys.path
 
 def main():
-    os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'DjangoTest.settings')
+    os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'DjangoTest.django_rest_framework_settings')
     try:
         from django.core.management import execute_from_command_line
     except ImportError as exc:

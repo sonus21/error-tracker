@@ -2,7 +2,7 @@
 #
 #    Error tracker's flask plugin, this class initialize it's internal state
 #
-#    :copyright: 2019 Sonu Kumar
+#    :copyright: 2020 Sonu Kumar
 #    :license: BSD-3-Clause
 #
 
@@ -18,7 +18,7 @@ from flask import request
 from error_tracker.libs.utils import Masking, ConfigError, get_exception_name, \
     get_context_detail, get_notification_subject
 from error_tracker.libs.mixins import ModelMixin
-from error_tracker.flask.utils import DefaultFlaskContextBuilder
+from error_tracker.flask.utils import DefaultFlaskContextBuilder, DefaultFlaskViewPermission
 from .view import Views
 from . import defaults
 import datetime
@@ -33,7 +33,8 @@ class AppErrorTracker(object):
     def __init__(self, app=None, db=None, model=None, notifier=None, recipients=None,
                  db_table_name="app_error", notification_subject_prefix=None,
                  url_prefix=None, masking=None, ticketing=None,
-                 context_builder=DefaultFlaskContextBuilder()):
+                 context_builder=DefaultFlaskContextBuilder(),
+                 view_permission=DefaultFlaskViewPermission()):
         """
         An error tracker class, which manage the exception and store them to database
         :param app: a Flask app instance where exception has to be tracked
@@ -67,18 +68,20 @@ class AppErrorTracker(object):
         self.recipients = recipients
         self.notification_sender = None
         self.ticketing = ticketing
+        self.view_permission = view_permission
 
         self.active = False
         if self.app:
             self.init_app(app, db, model=model, notifier=notifier, url_prefix=url_prefix,
                           masking=masking, context_builder=context_builder,
-                          ticketing=ticketing)
+                          ticketing=ticketing, view_permission=view_permission)
 
     def init_app(self, app, db, model=None, notifier=None, url_prefix=None, masking=None,
                  context_builder=DefaultFlaskContextBuilder(),
-                 ticketing=None):
+                 ticketing=None, view_permission=DefaultFlaskViewPermission()):
         """
         Initialize this app with different attributes
+        :param view_permission: view permission checker
         :param app: a Flask app instance
         :param db: Database connection object
         :param model: Database model class
@@ -92,6 +95,7 @@ class AppErrorTracker(object):
         """
         if self.active:
             raise ConfigError("App is already configured")
+        self.view_permission = view_permission
         self.app = app
         self.db = db
         if app is None:
@@ -115,7 +119,7 @@ class AppErrorTracker(object):
 
         global page_size
         self.model = model or self._get_model()
-        self.views = Views(self.app, self.model, url_prefix)
+        self.views = Views(self.app, self.model, url_prefix, self.view_permission)
         page_size = self.app.config.setdefault("APP_DEFAULT_LIST_SIZE", defaults.APP_DEFAULT_LIST_SIZE)
         # masking object setting
         if type(mask_key_has) == str:
@@ -250,7 +254,15 @@ class AppErrorTracker(object):
         if self.ticketing is not None:
             self.ticketing.raise_ticket(error)
 
-    def record_exception(self):
+    def capture_message(self, message):
+        """
+        Capture an error for the current error
+        :param message:  message to be recorded
+        :return:  None
+        """
+        self.capture_exception(additional_context={'message': message})
+
+    def capture_exception(self, additional_context=None):
         """
         Record occurred exception, check whether the exception recording is
         enabled or not. If it's enabled then record all the details and store
@@ -272,35 +284,40 @@ class AppErrorTracker(object):
             method = ""
 
         ty, frames, frame_str, traceback_str, rhash, request_data = \
-            get_context_detail(rq, self.masking, self.context_builder)
+            get_context_detail(rq, self.masking, self.context_builder, additional_context)
         error = self.model.create_or_update_entity(rhash, host, path, method,
                                                    str(request_data),
                                                    get_exception_name(ty),
                                                    traceback_str)
         self._post_process(rq, frame_str, frames, error)
 
-    def auto_track_exception(self, func):
+    def auto_track_exception(self, func, additional_context=None, silent=False):
         """
         Decorator to be used for automatic exception capture, where exception can occur
+        :param func:
+        :param additional_context:  any additional context
+        :param silent: exception should be re-raise or ignored
+        :return: None
         """
 
         def wrapper(*args, **kwargs):
             try:
                 return func(*args, **kwargs)
             except Exception as e:
-                self.record_exception()
-                raise e
+                self.capture_exception(additional_context)
+                if not silent:
+                    raise e
 
         return wrapper
 
     def track_exception(self, func):
         """
         Decorator to be used for automatic exception capture, on HTTP 500 etc,
-        where exception has already occured
+        where exception has already occurred
         """
 
         def wrapper(e):
-            self.record_exception()
+            self.capture_exception()
             return func(e)
 
         return wrapper

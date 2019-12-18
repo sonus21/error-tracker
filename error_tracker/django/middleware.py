@@ -2,7 +2,7 @@
 #
 #    Django error tracker middleware responsible for recording exception
 #
-#    :copyright: 2019 Sonu Kumar
+#    :copyright: 2020 Sonu Kumar
 #    :license: BSD-3-Clause
 #
 
@@ -68,12 +68,13 @@ class ErrorTracker(object):
         ErrorTracker._send_notification(request, message, frames[-1][:-1], error)
         ErrorTracker._raise_ticket(request, error)
 
-    def record_exception(self, request, exception):
+    def capture_exception(self, request=None, exception=None, additional_context=None):
         """
         Record the exception details and do post processing actions. this method can be used to track any exceptions,
         even those are being excepted using try/except block.
         :param request:  request object
         :param exception: what type of exception has occurred
+        :param additional_context: any additional context
         :return:  None
         """
         if request is not None:
@@ -86,31 +87,13 @@ class ErrorTracker(object):
             method = ""
 
         ty, frames, frame_str, traceback_str, rhash, request_data = \
-            get_context_detail(request, masking, context_builder)
+            get_context_detail(request, masking, context_builder,
+                               additional_context=additional_context)
         error = model.create_or_update_entity(rhash, host, path, method,
                                               str(request_data),
                                               get_exception_name(ty),
                                               traceback_str)
         ErrorTracker._post_process(request, frame_str, frames, error)
-
-
-# use this object to track errors in the case of custom failures, where try/except is used
-error_tracker = ErrorTracker()
-
-
-def track_exception(func):
-    """
-    Decorator to be used for automatic exception capture
-    """
-
-    def wrapper(*args, **kwargs):
-        try:
-            return func(*args, **kwargs)
-        except Exception as ex:
-            error_tracker.record_exception(None, ex)
-            raise ex
-
-    return wrapper
 
 
 class ExceptionTrackerMiddleWare(ErrorTracker):
@@ -128,4 +111,8 @@ class ExceptionTrackerMiddleWare(ErrorTracker):
     def process_exception(self, request, exception):
         if exception is None and not TRACK_ALL_EXCEPTIONS:
             return
-        self.record_exception(request, exception)
+        self.capture_exception(request, exception)
+
+
+# use this object to track errors in the case of custom failures, where try/except is used
+error_tracker = ErrorTracker()

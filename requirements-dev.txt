@@ -5,3 +5,4 @@ pyquery==1.4.1
 Django==1.11.26
 six
 coveralls
+djangorestframework
