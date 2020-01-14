@@ -9,5 +9,5 @@ def die(request):
     try:
         raise ValueError("Another test")
     except Exception as e:
-        error_tracker.record_exception(request, e)
+        error_tracker.capture_exception(request, e)
         raise e

@@ -118,3 +118,4 @@ STATIC_URL = '/static/'
 EXCEPTION_APP_DEFAULT_LIST_SIZE = 5
 APP_ERROR_NOTIFICATION_MODULE = "utils.TestNotification"
 APP_ERROR_TICKETING_MODULE = "utils.TicketingSystem"
+APP_ERROR_VIEW_PERMISSION = "utils.ViewPermission"

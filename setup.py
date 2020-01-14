@@ -46,6 +46,7 @@ setup(
         "Django",
         "Flask-SQLAlchemy",
         "six",
+        "djangorestframework"
     ],
     tests_require=[
         "Flask-Mail",

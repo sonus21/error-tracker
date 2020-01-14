@@ -2,7 +2,7 @@
 #
 #    Test app initialization post constructions
 #
-#    :copyright: 2019 Sonu Kumar
+#    :copyright: 2020 Sonu Kumar
 #    :license: BSD-3-Clause
 #
 
@@ -11,6 +11,7 @@ import unittest
 from .test_basic import BasicTest
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
+from tests.utils import ViewPermission
 from error_tracker import AppErrorTracker
 
 
@@ -22,7 +23,7 @@ class InitLaterTest(BasicTest):
         app.config['SQLALCHEMY_DATABASE_URI'] = "sqlite:///%s" % db_file
         db = SQLAlchemy(app)
         error_tracker = AppErrorTracker()
-        error_tracker.init_app(app, db)
+        error_tracker.init_app(app, db, view_permission=ViewPermission())
         db.drop_all()
         db.create_all()
         return app, db, error_tracker

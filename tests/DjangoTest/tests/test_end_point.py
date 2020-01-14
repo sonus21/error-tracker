@@ -2,7 +2,7 @@
 #
 #    Test all end points are working as expected
 #
-#    :copyright: 2019 Sonu Kumar
+#    :copyright: 2020 Sonu Kumar
 #    :license: BSD-3-Clause
 #
 
@@ -19,7 +19,7 @@ class ViewTestCase(TestCase, TestBase):
     def test_list_view(self):
         self.get('/value-error')
         self.post('/post-view')
-        html = self.get('/dev', follow=True)
+        html = self.get('/dev', follow=True).content
         urls = [node.attrib['href'] for node in pyquery.PyQuery(html)('a')]
         # 2 links for delete operation and 2 links to navigate
         self.assertEqual(len(urls), 2 + 2)
@@ -29,9 +29,9 @@ class ViewTestCase(TestCase, TestBase):
 
     def test_detail_view(self):
         self.get('/value-error')
-        html = self.get('/dev', follow=True)
+        html = self.get('/dev', follow=True).content
         url = [node.attrib['href'] for node in pyquery.PyQuery(html)('.view-link')][0]
-        response = self.get(url)
+        response = self.get(url).content
         row = pyquery.PyQuery(response)('.row')[0]
         p = pyquery.PyQuery(row)('p')
         divs = pyquery.PyQuery(row)('.row div')
@@ -40,7 +40,7 @@ class ViewTestCase(TestCase, TestBase):
 
     def test_delete_view(self):
         self.get('/value-error')
-        html = self.get('/dev', follow=True)
+        html = self.get('/dev', follow=True).content
         url = [node.attrib['href'] for node in pyquery.PyQuery(html)('.delete')][0]
         self.get(url, follow=True)
         self.assertEqual(len(self.get_exceptions()), 0)
@@ -60,22 +60,22 @@ class ViewTestCase(TestCase, TestBase):
                                                exception.exception_name,
                                                exception.traceback)
 
-        response = self.get('/dev', follow=True)
+        response = self.get('/dev', follow=True).content
         urls = [node.attrib['href'] for node in pyquery.PyQuery(response)('a')]
         self.assertEqual(len(urls), settings.EXCEPTION_APP_DEFAULT_LIST_SIZE * 2 + 1)
         self.assertTrue('/dev/?page=2' in urls)
 
-        response = self.get('/dev/?page=2', follow=True)
+        response = self.get('/dev/?page=2', follow=True).content
         urls = [node.attrib['href'] for node in pyquery.PyQuery(response)('a')]
         self.assertEqual(len(urls), settings.EXCEPTION_APP_DEFAULT_LIST_SIZE * 2 + 2)
         self.assertTrue('/dev/?page=1' in urls)
         self.assertTrue('/dev/?page=3' in urls)
 
-        response = self.get('/dev/?page=5', follow=True)
+        response = self.get('/dev/?page=5', follow=True).content
         urls = [node.attrib['href'] for node in pyquery.PyQuery(response)('a')]
         self.assertTrue('/dev/?page=4' in urls)
 
-        response = self.get('/dev/?page=6', follow=True)
+        response = self.get('/dev/?page=6', follow=True).content
         urls = [node.attrib['href'] for node in pyquery.PyQuery(response)('a')]
         self.assertEqual(len(urls), 1)
 

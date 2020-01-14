@@ -1,9 +1,18 @@
+# -*- coding: utf-8 -*-
+#
+#    Test utility
+#
+#    :copyright: 2020 Sonu Kumar
+#    :license: BSD-3-Clause
+#
+
+
 import datetime
 from collections import namedtuple
 
 import six
 
-from error_tracker import ModelMixin, TicketingMixin, NotificationMixin, MaskingMixin
+from error_tracker import ModelMixin, TicketingMixin, NotificationMixin, MaskingMixin, ViewPermissionMixin
 
 Error = namedtuple("Error", "hash, host, path, method, request_data, exception_name,"
                             " traceback, count, created_on, last_seen")
@@ -90,3 +99,8 @@ class Masking(MaskingMixin):
                 if k in tmp_key:
                     return True, "'%s'" % self.mask_with
         return False, None
+
+
+class ViewPermission(ViewPermissionMixin):
+    def __call__(self, request):
+        return True

@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 #     Exception formatter defaults view for flask app
 #
-#     :copyright: 2019 Sonu Kumar
+#     :copyright: 2020 Sonu Kumar
 #     :license: BSD-3-Clause
 #
 
@@ -13,8 +13,9 @@ root_path = os.path.abspath(os.path.dirname(__file__))
 
 
 class Views(object):
-    def __init__(self, app, model, url_prefix):
-        model = model
+    def __init__(self, app, model, url_prefix, view_permission):
+        self.model = model
+        self.view_permission = view_permission
         blueprint = blueprints.Blueprint("app_error", 'app_error',
                                          root_path=root_path,
                                          template_folder="templates", url_prefix=url_prefix)
@@ -25,6 +26,8 @@ class Views(object):
             List exceptions based on the page number
             :return: rendered template
             """
+            if not view_permission(request):
+                abort(401)
             title = "App Error"
             page = request.args.get('page', 1, type=int)
             error = False
@@ -43,6 +46,8 @@ class Views(object):
             :param rhash:  hash key of the exception
             :return: detailed view page
             """
+            if not view_permission(request):
+                abort(401)
             obj = model.get_entity(rhash)
             error = False
             if obj is None:
@@ -51,13 +56,15 @@ class Views(object):
 
             return render_template('detail.html', error=error, title=title, obj=obj)
 
-        @blueprint.route('/delete_entity/<string:rhash>')
+        @blueprint.route('/delete/<string:rhash>')
         def view_delete(rhash):
             """
             Delete a specific exceptions identified by rhash
             :param rhash: hash key of the exception
             :return: redirect back to the home page
             """
+            if not view_permission(request):
+                abort(401)
             model.delete_entity(rhash)
             return redirect(url_for('app_error.view_list'))
 

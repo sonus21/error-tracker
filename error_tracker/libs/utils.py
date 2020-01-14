@@ -2,7 +2,7 @@
 #
 #     Exception formatter utils module
 #
-#     :copyright: 2019 Sonu Kumar
+#     :copyright: 2020 Sonu Kumar
 #     :license: BSD-3-Clause
 #
 import sys
@@ -41,13 +41,15 @@ def get_exception_name(e):
     return str(e).replace("'>", "").replace("<class '", "").replace("<type 'exceptions.", "")
 
 
-def get_context_detail(request, masking, context_builder):
+def get_context_detail(request, masking, context_builder,
+                       additional_context):
     ty, val, tb = sys.exc_info()
     frames = traceback.format_exception(ty, val, tb)
     traceback_str = format_exception(tb, masking=masking)
     frame_str = ''.join(frames)
     rhash = sha256(str.encode(frame_str, "UTF-8")).hexdigest()
-    request_data = context_builder.get_context(request, masking=masking)
+    request_data = context_builder.get_context(request, masking=masking,
+                                               additional_context=additional_context)
     return ty, frames, frame_str, traceback_str, rhash, request_data
 
 

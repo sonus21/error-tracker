@@ -96,7 +96,7 @@ app.py
     # Record exception when 404 error code is raised
     @app.errorhandler(403)
     def error_403(e):
-        error_tracker.record_exception()
+        error_tracker.capture_exception()
         # any custom logic
 
     # Record error using decorator
