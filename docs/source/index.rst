@@ -145,7 +145,7 @@ We need to update settings.py file as
 .. [1] This should be added at the end so that it can process exception 1st in the middleware call stack.
 
 .. note::
-    Exception listing page is only enable for admin by default.
+    Exception listing page is only enable for super users by default.
     You can enable for others by providing a custom implementation of ViewPermissionMixin.
     This class must return True/False based on the current request, False means not authorized, True means authorized.
 
@@ -155,7 +155,7 @@ We need to update settings.py file as
     APP_ERROR_RECIPIENT_EMAIL = ('example@example.com',)
     APP_ERROR_SUBJECT_PREFIX = "Server Error"
     APP_ERROR_EMAIL_SENDER = 'user@example.com'
-    # optional setting otherwise it's enabled for admin only
+    # optional setting otherwise it's enabled for super users only
     APP_ERROR_VIEW_PERMISSION = 'permission.ErrorViewPermission'
 
     INSTALLED_APPS = [

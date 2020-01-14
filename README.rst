@@ -4,10 +4,19 @@ Error Tracker
 
 **Full featured error tracking module for Python apps supports Flask and Django**
 
+.. image::  https://img.shields.io/pypi/v/error-tracker.svg?color=dark-green
+    :target: https://pypi.org/project/error-tracker
+
+.. image::  https://img.shields.io/pypi/pyversions/error-tracker.svg?color=dark-green
+    :target: https://pypi.org/project/error-tracker
+
+.. image:: https://img.shields.io/github/license/sonus21/error-tracker.svg?color=dark-green
+    :target: https://github.com/sonus21/error-tracker/blob/master/LICENSE.txt
+
 .. image:: https://travis-ci.org/sonus21/error-tracker.svg?branch=master
     :target: https://travis-ci.org/sonus21/error-tracker
 
-.. image:: https://coveralls.io/repos/github/sonus21/error-tracker/badge.svg
+.. image:: https://coveralls.io/repos/github/sonus21/error-tracker/badge.svg?color=dark-green
     :target: https://coveralls.io/github/sonus21/error-tracker
 
 Introduction
