@@ -1,8 +1,8 @@
-Flask==1.1.1
-Flask-Mail==0.9.1
-Flask-SQLAlchemy==2.4.1
-pyquery==1.4.1
-Django==1.11.26
+Flask
+Flask-Mail
+Flask-SQLAlchemy
+pyquery
+Django
 six
 coveralls
 djangorestframework
