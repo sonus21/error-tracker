@@ -45,7 +45,7 @@ def view_list(request):
     prev_url = reverse('view_errors') + "?page=" + str(errors.prev_num) \
         if errors.has_prev else None
 
-    return render(request, template_name='list.html',
+    return render(request, template_name='error_tracker/list.html',
                   context=dict(error=error, title=title, errors=errors,
                                next_url=next_url, prev_url=prev_url))
 
@@ -77,5 +77,5 @@ def detail(request, rhash):
     if obj is None:
         raise Http404
     title = "%s : %s" % (obj.method, obj.path)
-    return render(request, template_name='detail.html',
+    return render(request, template_name='error_tracker/detail.html',
                   context=dict(error=error, title=title, obj=obj))
