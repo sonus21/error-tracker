@@ -96,8 +96,8 @@ class DjangoNotification(NotificationMixin):
 class DefaultDjangoViewPermission(ViewPermissionMixin):
 
     def __call__(self, request):
-        if hasattr(request.user, "is_admin"):
-            return request.user.is_admin()
+        if hasattr(request.user, "is_superuser"):
+            return request.user.is_superuser
         return False
 
 

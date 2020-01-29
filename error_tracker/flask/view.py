@@ -36,7 +36,7 @@ class Views(object):
                 if errors.has_next else None
             prev_url = url_for('app_error.view_list', page=errors.prev_num) \
                 if errors.has_prev else None
-            return render_template('list.html', error=error, title=title, errors=errors,
+            return render_template('error_tracker/list.html', error=error, title=title, errors=errors,
                                    next_url=next_url, prev_url=prev_url)
 
         @blueprint.route('/<string:rhash>')
@@ -54,7 +54,7 @@ class Views(object):
                 abort(404)
             title = "%s : %s" % (obj.method, obj.path)
 
-            return render_template('detail.html', error=error, title=title, obj=obj)
+            return render_template('error_tracker/detail.html', error=error, title=title, obj=obj)
 
         @blueprint.route('/delete/<string:rhash>')
         def view_delete(rhash):
