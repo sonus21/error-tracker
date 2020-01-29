@@ -120,3 +120,29 @@ def get_class_instance(module_path, mixin, default, message_prefix, *args):
         message = "Default " + message_prefix + " module will be used"
         warnings.warn(message)
         return default(*args)
+
+
+def get_context_dict(headers=None, context=None, form=None, args=None, masking=None):
+    request_data = dict()
+    form = form or {}
+    headers = headers or {}
+    args = args or {}
+    context = context or {}
+    if len(context) != 0:
+        request_data['context'] = context
+    if masking:
+        for key in form:
+            masked, value = masking(key)
+            if masked:
+                form[key] = value
+        for key in headers:
+            masked, value = masking(key)
+            if masked:
+                headers[key] = value
+    if len(headers) != 0:
+        request_data['headers'] = headers
+    if len(args) != 0:
+        request_data['args'] = args
+    if len(form) != 0:
+        request_data['form'] = form
+    return request_data

@@ -11,17 +11,20 @@ import re
 from django.http import RawPostDataException
 
 from error_tracker.libs.mixins import ContextBuilderMixin, NotificationMixin, ViewPermissionMixin
+from error_tracker.libs.utils import get_context_dict
 from django.core.mail import send_mail
 
 
-# noinspection PyMethodMayBeStatic
 class DefaultDjangoContextBuilder(ContextBuilderMixin):
     """
     Default request builder, this records, form data, header and URL parameters and mask them if necessary
     """
 
-    def _get_form_data(self, request):
+    @staticmethod
+    def _get_form_data(request):
         form = {}
+        if request is None:
+            return form
         post = request.POST
         if post is None or len(post) == 0:
             body = None
@@ -46,37 +49,28 @@ class DefaultDjangoContextBuilder(ContextBuilderMixin):
             form = post.dict()
         return form
 
-    def _get_headers(self, request):
-        try:
-            headers = request.headers.dict()
-        except AttributeError:
-            regex = re.compile('^HTTP_')
-            headers = dict((regex.sub('', header), value) for (header, value)
-                           in request.META.items() if header.startswith('HTTP_'))
-        return headers
+    @staticmethod
+    def _get_headers(request):
+        if request is not None:
+            try:
+                headers = request.headers.dict()
+            except AttributeError:
+                regex = re.compile('^HTTP_')
+                headers = dict((regex.sub('', header), value) for (header, value)
+                               in request.META.items() if header.startswith('HTTP_'))
+            return headers
+
+    @staticmethod
+    def _get_args(request):
+        if request is not None:
+            return request.GET.dict()
 
     def get_context(self, request, masking=None, additional_context=None):
-        request_data = dict()
-        if additional_context is not None and len(additional_context) != 0:
-            request_data['context'] = additional_context
-        if request is not None:
-            form = self._get_form_data(request)
-            headers = self._get_headers(request)
-            if masking:
-                for key in form:
-                    masked, value = masking(key)
-                    if masked:
-                        form[key] = value
-                for key in headers:
-                    masked, value = masking(key)
-                    if masked:
-                        headers[key] = value
-                request_data.update({
-                    'headers': headers,
-                    'args': request.GET.dict(),
-                    'form': form,
-                })
-        return str(request_data)
+        return str(get_context_dict(headers=self._get_headers(request),
+                                    form=self._get_form_data(request),
+                                    args=self._get_args(request),
+                                    context=additional_context,
+                                    masking=masking))
 
 
 class DjangoNotification(NotificationMixin):
