@@ -30,7 +30,7 @@
             <div><strong>Request data: </strong>{{ obj.request_data }}</div>
             <hr/>
             <div><strong>Exception detail: </strong><br/>
-                {{ obj.traceback|replace_new_line_with_br|safe }}</div>
+                {{ obj.traceback|escape|replace_new_line_with_br|safe }}</div>
         </div>
     {% endif %}
 {% endblock %}
