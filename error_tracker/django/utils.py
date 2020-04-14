@@ -7,6 +7,7 @@
 #
 
 import re
+import json
 
 from django.http import RawPostDataException
 
@@ -36,11 +37,13 @@ class DefaultDjangoContextBuilder(ContextBuilderMixin):
                 except RawPostDataException:
                     pass
             if body is not None:
-                from rest_framework.request import Request
-                if isinstance(body, Request):
-                    form = body.data
-                elif len(body) > 0:
-                    import json
+                try:
+                    from rest_framework.request import Request
+                    if isinstance(body, Request):
+                        form = body.data
+                except ImportError:
+                    pass
+                if len(form) == 0 and len(body) > 0:
                     try:
                         form = json.loads(body, encoding="UTF-8")
                     except Exception:

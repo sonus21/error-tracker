@@ -10,7 +10,6 @@ import traceback
 import warnings
 from hashlib import sha256
 import six
-from django.utils.module_loading import import_string
 
 from error_tracker.libs.exception_formatter import format_exception
 from error_tracker.libs.mixins import MaskingMixin
@@ -75,6 +74,7 @@ def get_class_from_path(module_path, super_class, raise_exception=True,
     :param warning_message: any warning message
     :return: imported class
     """
+    from django.utils.module_loading import import_string
     try:
         cls = import_string(module_path)
         cls_fields = cls.__dict__.keys()
