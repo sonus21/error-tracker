@@ -45,7 +45,8 @@ setup(
         "six",
     ],
     extras_require={
-        "Django": ["Django", "djangorestframework"],
+        "Django": ["Django"],
+        "DRF": ["djangorestframework"],
         "Flask": ["Flask", "Flask-SQLAlchemy"],
     },
     tests_require=[
