@@ -42,15 +42,20 @@ setup(
     zip_safe=False,
     platforms='any',
     install_requires=[
-        "Flask",
-        "Django",
-        "Flask-SQLAlchemy",
         "six",
-        "djangorestframework"
     ],
+    extras_require={
+        "Django": ["Django"],
+        "DRF": ["djangorestframework"],
+        "Flask": ["Flask", "Flask-SQLAlchemy"],
+    },
     tests_require=[
         "Flask-Mail",
         'pyquery'
+        "Django",
+        "djangorestframework",
+        "Flask",
+        "Flask-SQLAlchemy"
     ],
     classifiers=[
         'Development Status :: 5 - Production/Stable',

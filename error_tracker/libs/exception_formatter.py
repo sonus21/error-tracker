@@ -2,7 +2,7 @@
 #
 #    Exception formatter that captures frame details in string format.
 #
-#    :copyright: 2019 Sonu Kumar
+#    :copyright: 2020 Sonu Kumar
 #    :license: BSD-3-Clause
 #
 
@@ -10,8 +10,6 @@ import six
 import itertools
 import sys
 import traceback
-
-from django.http import QueryDict
 
 try:
     import builtins
@@ -24,7 +22,22 @@ except ImportError:
 
 import re
 import types
-from werkzeug.datastructures import ImmutableMultiDict
+
+
+def convert_if_possible(x):
+    try:
+        from werkzeug.datastructures import ImmutableMultiDict
+        if type(x) == ImmutableMultiDict:
+            return "ImmutableMultiDict({%s})", x.to_dict(flat=False)
+    except ImportError:
+        pass
+    try:
+        from django.http import QueryDict
+        if type(x) == QueryDict:
+            return "QueryDict({%s})", x.dict()
+    except ImportError:
+        pass
+    return None, None
 
 
 def format_frame(x, max_elements, max_string, max_recursion, masking=None):
@@ -71,38 +84,34 @@ def format_frame(x, max_elements, max_string, max_recursion, masking=None):
 
     if x is builtins.__dict__:
         return "<builtins>"
-    elif type(x) == dict:
+    if type(x) == dict:
         return _it_to_string("{%s}", sorted(x.items()), per_element=_per_dict_element)
-    elif type(x) == list:
+    if type(x) == list:
         return _it_to_string("[%s]", x)
-    elif type(x) == tuple:
+    if type(x) == tuple:
         return _it_to_string("(%s)" if len(x) != 1
                                        or max_recursion <= 0
                                        or max_elements <= 0
                              else "(%s,)", x)
-    elif type(x) == set:
+    if type(x) == set:
         return _it_to_string("set([%s])", sorted(x))
-    elif type(x) == frozenset:
+    if type(x) == frozenset:
         return _it_to_string("frozenset([%s])", sorted(x))
-    elif isinstance(x, six.string_types) and max_string < len(x):
+    if isinstance(x, six.string_types) and max_string < len(x):
         return repr(x[:max_string] + "...")
-    elif type(x) == ImmutableMultiDict:
-        x = x.to_dict(flat=False)
-        return _it_to_string("ImmutableMultiDict({%s})", sorted(x.items()),
+
+    converted, x = convert_if_possible(x)
+    if converted is not None:
+        return _it_to_string(converted, sorted(x.items()),
                              per_element=_per_dict_element)
-    elif type(x) == QueryDict:
-        x = x.dict()
-        return _it_to_string("QueryDict({%s})", sorted(x.items()),
-                             per_element=_per_dict_element)
-    else:
-        try:
-            if issubclass(x, dict):
-                x = dict(x)
-                return _it_to_string("Dict({%s})", sorted(x.items()),
-                                     per_element=_per_dict_element)
-        except TypeError:
-            pass
-        return repr(x)
+    try:
+        if issubclass(x, dict):
+            x = dict(x)
+            return _it_to_string("Dict({%s})", sorted(x.items()),
+                                 per_element=_per_dict_element)
+    except TypeError:
+        pass
+    return repr(x)
 
 
 def can_be_skipped(key, value):
