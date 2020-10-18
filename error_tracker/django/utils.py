@@ -90,8 +90,6 @@ class DjangoNotification(NotificationMixin):
             send_mail(email_subject, email_body, from_email, recipient_list, fail_silently=True)
             exception.notification_send = True
             exception.save()
-
-
 class DefaultDjangoViewPermission(ViewPermissionMixin):
 
     def __call__(self, request):
