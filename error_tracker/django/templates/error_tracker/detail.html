@@ -27,7 +27,7 @@
             <hr/>
             <p><strong>Occurrences: </strong>{{ obj.count }}</p>
             <hr/>
-            <div><strong>Request data: </strong>{{ obj.request_data }}</div>
+            <div><strong>Request data: </strong>{{obj.request_data|to_pretty}}</div>
             <hr/>
             <div><strong>Exception detail: </strong><br/>
                 {{ obj.traceback|escape|replace_new_line_with_br|safe }}</div>

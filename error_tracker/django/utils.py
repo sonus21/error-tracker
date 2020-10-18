@@ -8,8 +8,8 @@
 
 import re
 import json
-
 from django.http import RawPostDataException
+from http.cookies import SimpleCookie
 
 from error_tracker.libs.mixins import ContextBuilderMixin, NotificationMixin, ViewPermissionMixin
 from error_tracker.libs.utils import get_context_dict
@@ -54,15 +54,38 @@ class DefaultDjangoContextBuilder(ContextBuilderMixin):
 
     @staticmethod
     def _get_headers(request):
+        # lamda fonction for cookie cleaning
+        clean_value = lambda x : x.value.replace('[["', "").replace('"]]', "").replace('"', "")
+        
         if request is not None:
             try:
-                headers = request.headers.dict()
-            except AttributeError:
+                headers = request.headers
+                new_headers = {}
+                for key, value in headers.items():
+                    print(key)
+                    try:
+                        # Test if value could be json loaded, parse if needed as for cookie.
+                        json.loads('{"%s":"%s"}' % (key, value))
+                    except Exception as e:
+                        if key in ["Cookie", "cookie"]:
+                            try:
+                                cookie = SimpleCookie()
+                                cookie.load(value)
+                                value = {k: clean_value(v) for k, v in cookie.items()}
+                            except Exception as e:
+                                value = ""
+                        else:
+                            value = ""
+                   
+                    new_headers[key] = value
+                headers = new_headers
+                
+            except AttributeError as e:
                 regex = re.compile('^HTTP_')
                 headers = dict((regex.sub('', header), value) for (header, value)
                                in request.META.items() if header.startswith('HTTP_'))
             return headers
-
+    
     @staticmethod
     def _get_args(request):
         if request is not None:
