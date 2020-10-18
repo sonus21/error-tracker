@@ -31,7 +31,7 @@ class ErrorModel(models.Model, ModelMixin):
     created_on = models.DateTimeField(auto_now=True)
     last_seen = models.DateTimeField(auto_now=True, db_index=True)
     notification_send = models.BooleanField(default=False)
-    ticket_raise = models.BooleanField(default=False)
+    ticket_raised = models.BooleanField(default=False)
     
 
     @classmethod
