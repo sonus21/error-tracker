@@ -1,17 +1,29 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-	<meta charset="UTF-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1">
-	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
-	<script src="//ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-	<script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
-</head>
-<title>{{ title }}</title>
-<body>
-<div class="container">
-	{% block content_block %}
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+		<script src="//ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+		<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+	{% block head_script %}
+		<style>
+			body{
+				font-size: 14px;
+			}
+		</style>
 	{% endblock %}
-</div>
-</body>
+	</head>
+	<title>{{ title }}</title>
+	<body>
+		<div class="container">
+			{% block header_block %}
+				<h2 class="text-center mb-5 mt-3">
+					<a href="{% url 'view_errors' %}" class="text-dark">Errors Seen</a>
+				</h2>
+			{% endblock %}
+			{% block content_block %}
+			{% endblock %}
+		</div>
+	</body>
 </html>
