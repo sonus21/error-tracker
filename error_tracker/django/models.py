@@ -30,6 +30,9 @@ class ErrorModel(models.Model, ModelMixin):
     count = models.IntegerField(default=0)
     created_on = models.DateTimeField(auto_now=True)
     last_seen = models.DateTimeField(auto_now=True, db_index=True)
+    notification_send = models.BooleanField(default=False)
+    ticket_raise = models.BooleanField(default=False)
+    
 
     @classmethod
     def get_exceptions_per_page(cls, page_number=1):
