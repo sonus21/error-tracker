@@ -65,8 +65,10 @@ class ErrorTracker(object):
         else:
             message = ""
         message += frame_str
-        ErrorTracker._send_notification(request, message, frames[-1][:-1], error)
-        ErrorTracker._raise_ticket(request, error)
+        if not error.notification_send:
+            ErrorTracker._send_notification(request, message, frames[-1][:-1], error)
+        if not error.ticket_raised:
+            ErrorTracker._raise_ticket(request, error)
 
     def capture_exception(self, request=None, exception=None, additional_context=None):
         """
