@@ -7,35 +7,35 @@
 {% else %}
 
     <div class="row mb-4">
-        <div class="col-md-2 bg-dark p-1 text-white text-center font-weight-bold border">Method</div>
-        <div class="col-md-10 bg-dark p-1 text-white text-center font-weight-bold border">Referrer</div>
-        <div class="col-md-2  p-1 text-center border bg-light">
+        <div class="col-md-2 bg-dark p-1 text-white text-center font-weight-bold">Method</div>
+        <div class="col-md-10 bg-dark p-1 text-white text-center font-weight-bold">Referrer</div>
+        <div class="col-md-2  p-1 text-center bg-light">
             {{ obj.method }} 
         </div>
-        <div class="col-md-10  p-1 text-center border bg-light">
+        <div class="col-md-10  p-1 text-center bg-light">
             {{ obj.host }}{{ obj.path }}
         </div>
     </div>
 
     <div class="row mb-4 mt-2">
-        <div class="col-md-4 border p-0">
+        <div class="col-md-4 p-0">
             <div class="col-md-12 text-center bg-dark text-white font-weight-bold p-0">First time seen</div>
             <div class="col-md-12 text-center bg-light">{{ obj.created_on }}</div>
         </div>
-        <div class="col-md-4 border p-0">
+        <div class="col-md-4 p-0">
             <div class="col-md-12 text-center bg-dark text-white font-weight-bold">Last seen</div>
             <div class="col-md-12 text-center bg-light">{{ obj.last_seen }}</div>
         </div>
-        <div class="col-md-4 border p-0">
+        <div class="col-md-4 p-0">
             <div class="col-md-12 text-center bg-dark text-white font-weight-bold" >Occurrences</div>
             <div class="col-md-12 text-center bg-light">{{ obj.count }}</div>
         </div>
     </div>
-    <div class="row border">
+    <div class="row">
         <div class="col-md-12 text-center bg-dark text-white font-weight-bold p-1">Request data</div>
         <div class="col-md-12 col-lg-12 bg-light">{{obj.request_data|to_pretty}}</div>
     </div>
-    <div class="row border">
+    <div class="row">
         <div class="col-md-12 text-center bg-dark text-white font-weight-bold p-1">Exception detail</div>
         <div class="col-md-12 bg-light"><pre> {{obj.traceback|escape|replace_new_line_with_br|safe}}</pre>
         </div>
