@@ -62,7 +62,6 @@ class DefaultDjangoContextBuilder(ContextBuilderMixin):
                 headers = request.headers
                 new_headers = {}
                 for key, value in headers.items():
-                    print(key)
                     try:
                         # Test if value could be json loaded, parse if needed as for cookie.
                         json.loads('{"%s":"%s"}' % (key, value))
@@ -79,7 +78,7 @@ class DefaultDjangoContextBuilder(ContextBuilderMixin):
                    
                     new_headers[key] = value
                 headers = new_headers
-                
+
             except AttributeError as e:
                 regex = re.compile('^HTTP_')
                 headers = dict((regex.sub('', header), value) for (header, value)

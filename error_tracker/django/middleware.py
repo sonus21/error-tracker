@@ -8,7 +8,8 @@
 
 from error_tracker.django import get_masking_module, get_context_builder, get_ticketing_module, \
     get_exception_model, get_notification_module, APP_ERROR_SUBJECT_PREFIX, APP_ERROR_EMAIL_SENDER, \
-    APP_ERROR_RECIPIENT_EMAIL, TRACK_ALL_EXCEPTIONS
+    APP_ERROR_RECIPIENT_EMAIL, TRACK_ALL_EXCEPTIONS, APP_ERROR_NOTIFICATION_ONCE, \
+    APP_ERROR_TICKET_ONCE
 from error_tracker.libs.utils import get_exception_name, get_context_detail, get_notification_subject
 
 model = get_exception_model()
@@ -60,14 +61,24 @@ class ErrorTracker(object):
 
     @staticmethod
     def _post_process(request, frame_str, frames, error):
+        send_notification = True
+        raise_ticket = True
+        
         if request is not None:
             message = ('URL: %s' % request.path) + '\n\n'
         else:
             message = ""
         message += frame_str
-        if not error.notification_send:
+
+        if APP_ERROR_NOTIFICATION_ONCE is True and error.notification_send is True:
+            send_notification = False
+
+        if APP_ERROR_TICKET_ONCE is True and error.ticket_raised is True:
+            raise_ticket = False
+
+        if send_notification:
             ErrorTracker._send_notification(request, message, frames[-1][:-1], error)
-        if not error.ticket_raised:
+        if raise_ticket:
             ErrorTracker._raise_ticket(request, error)
 
     def capture_exception(self, request=None, exception=None, additional_context=None):
