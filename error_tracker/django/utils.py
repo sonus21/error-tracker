@@ -54,37 +54,15 @@ class DefaultDjangoContextBuilder(ContextBuilderMixin):
 
     @staticmethod
     def _get_headers(request):
-        # lamda fonction for cookie cleaning
-        clean_value = lambda x : x.value.replace('[["', "").replace('"]]', "").replace('"', "")
-        
         if request is not None:
             try:
-                headers = request.headers
-                new_headers = {}
-                for key, value in headers.items():
-                    try:
-                        # Test if value could be json loaded, parse if needed as for cookie.
-                        json.loads('{"%s":"%s"}' % (key, value))
-                    except Exception as e:
-                        if key in ["Cookie", "cookie"]:
-                            try:
-                                cookie = SimpleCookie()
-                                cookie.load(value)
-                                value = {k: clean_value(v) for k, v in cookie.items()}
-                            except Exception as e:
-                                value = ""
-                        else:
-                            value = ""
-                   
-                    new_headers[key] = value
-                headers = new_headers
-
+                headers = cookie_parse(request.headers)
             except AttributeError as e:
                 regex = re.compile('^HTTP_')
                 headers = dict((regex.sub('', header), value) for (header, value)
                                in request.META.items() if header.startswith('HTTP_'))
             return headers
-    
+
     @staticmethod
     def _get_args(request):
         if request is not None:
@@ -205,3 +183,34 @@ def capture_exception(request=None, exception=None, additional_context=None):
     from error_tracker.django.middleware import error_tracker
     error_tracker.capture_exception(request=request, exception=exception,
                                     additional_context=additional_context)
+
+
+def clean_value(x):
+    x = x.value.replace('[["', "").replace('"]]', "").replace('"', "")
+    return x
+
+
+def cookie_parse(headers):
+    """
+    Parse request headers to extract cookie.
+    :param headers (request headers])
+    :return: [dict]: return parse header with cookie as dict
+    """
+    new_headers = {}
+    for key, value in headers.items():
+        try:
+            # Test if value could be json loaded, parse if needed as for cookie.
+            json.loads('{"%s":"%s"}' % (key, value))
+        except Exception as e:
+            if key in ["Cookie", "cookie"]:
+                try:
+                    cookie = SimpleCookie()
+                    cookie.load(value)
+                    value = {k: clean_value(v) for k, v in cookie.items()}
+                except Exception as e:
+                    value = ""
+            else:
+                value = ""
+        
+        new_headers[key] = value
+    return new_headers
