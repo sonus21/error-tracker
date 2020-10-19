@@ -10,19 +10,14 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        # migrations.AddField(
-        #     model_name='errormodel',
-        #     name='notification_send',
-        #     field=models.BooleanField(default=False),
-        # ),
-        # migrations.AddField(
-        #     model_name='errormodel',
-        #     name='ticket_raised',
-        #     field=models.BooleanField(default=False),
-        # ),
-        migrations.AlterField(
+        migrations.AddField(
             model_name='errormodel',
-            name='request_data',
-            field=models.JSONField(),
+            name='notification_send',
+            field=models.BooleanField(default=False),
+        ),
+        migrations.AddField(
+            model_name='errormodel',
+            name='ticket_raised',
+            field=models.BooleanField(default=False),
         ),
     ]
