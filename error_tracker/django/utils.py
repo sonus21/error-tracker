@@ -88,7 +88,7 @@ class DjangoNotification(NotificationMixin):
                recipient_list=None):
         if recipient_list is not None and from_email is not None:
             send_mail(email_subject, email_body, from_email, recipient_list, fail_silently=True)
-            exception.notification_send = True
+            exception.notification_sent = True
             exception.save()
 
 class DefaultDjangoViewPermission(ViewPermissionMixin):

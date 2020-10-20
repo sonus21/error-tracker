@@ -39,7 +39,7 @@ class ModelMixin(object):
     count = None
     created_on = None
     last_seen = None
-    notification_send = None
+    notification_sent = None
     ticket_raised = None
 
     def __str__(self):

@@ -25,7 +25,7 @@ def to_pretty(x):
         x = json.loads(x)
     except Exception as e:
         try:
-            x = x.replace("'", '"')
+            x = x.replace("'", '"').replace("\\\\", "\\")
             x = json.loads(x)
         except Exception as e:
             pass

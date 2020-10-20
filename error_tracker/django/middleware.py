@@ -70,7 +70,7 @@ class ErrorTracker(object):
             message = ""
         message += frame_str
 
-        if APP_ERROR_NOTIFICATION_ONCE is True and error.notification_send is True:
+        if APP_ERROR_NOTIFICATION_ONCE is True and error.notification_sent is True:
             send_notification = False
 
         if APP_ERROR_TICKET_ONCE is True and error.ticket_raised is True:

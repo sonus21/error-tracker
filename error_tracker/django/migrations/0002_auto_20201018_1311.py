@@ -12,7 +12,7 @@ class Migration(migrations.Migration):
     operations = [
         migrations.AddField(
             model_name='errormodel',
-            name='notification_send',
+            name='notification_sent',
             field=models.BooleanField(default=False),
         ),
         migrations.AddField(
