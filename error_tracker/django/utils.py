@@ -56,7 +56,7 @@ class DefaultDjangoContextBuilder(ContextBuilderMixin):
     def _get_headers(request):
         if request is not None:
             try:
-                headers = cookie_parse(request.headers)
+                headers = parse_headers(request.headers)
             except AttributeError as e:
                 regex = re.compile('^HTTP_')
                 headers = dict((regex.sub('', header), value) for (header, value)
@@ -190,7 +190,7 @@ def clean_value(x):
     return x
 
 
-def cookie_parse(headers):
+def parse_headers(headers):
     """
     Parse request headers to extract cookie.
     :param headers (request headers])
@@ -199,7 +199,7 @@ def cookie_parse(headers):
     new_headers = {}
     for key, value in headers.items():
         try:
-            # Test if value could be json loaded, parse if needed as for cookie.
+            # Pare each key, value from headers items and Test if could be "json loaded". If not, we set the correspondant value to empty except for cookie key.
             json.loads('{"%s":"%s"}' % (key, value))
         except Exception as e:
             if key in ["Cookie", "cookie"]:

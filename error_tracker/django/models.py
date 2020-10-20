@@ -32,6 +32,7 @@ class ErrorModel(models.Model, ModelMixin):
     last_seen = models.DateTimeField(auto_now=True, db_index=True)
     notification_sent = models.BooleanField(default=False)
     ticket_raised = models.BooleanField(default=False)
+
     @classmethod
     def get_exceptions_per_page(cls, page_number=1):
         records = cls.objects.all().order_by('last_seen')
