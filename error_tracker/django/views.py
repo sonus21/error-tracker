@@ -10,6 +10,7 @@ from django.shortcuts import redirect, render
 from django.urls import reverse
 from django.views.decorators.http import require_GET
 from error_tracker.django import get_exception_model, get_view_permission
+from django.contrib.auth.decorators import login_required
 
 model = get_exception_model()
 
@@ -17,11 +18,11 @@ view_permission = get_view_permission()
 
 
 def has_view_permission(func):
+    @login_required
     def wrapper(request, *args, **kwargs):
         if view_permission(request):
             return func(request, *args, **kwargs)
         return HttpResponse(status=401)
-
     return wrapper
 
 
