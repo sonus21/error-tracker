@@ -1,0 +1,14 @@
+<div>
+    <div style="margin: 0 auto;text-align: center;">
+        {% if prev_url %}
+            <a href="{{ prev_url }}" style="{% if next_url %}margin-right: 10px{% endif %}">
+                <i class="glyphicon glyphicon-circle-arrow-left"></i> Newer exceptions
+            </a>
+        {% endif %}
+        {% if next_url %}
+            <a href="{{ next_url }}" style="{% if prev_url %}margin-left: 10px;{% endif %}">
+                Older exceptions <i class="glyphicon glyphicon-circle-arrow-right"></i>
+            </a>
+        {% endif %}
+    </div>
+</div>

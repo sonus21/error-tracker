@@ -1,59 +1,114 @@
 {% extends 'error_tracker/base.html' %}
 
 {% block content_block %}
+{% block head_script %}
+{{block.super}}
+    <script>
+        $(document).ready(function(){
+            ajax_paginate()
+            filter_watch()
+            filter_reset()
+        })
+
+        function ajax_paginate(){
+            $('a.page-link').click(function(e) {
+                e.preventDefault();
+                $.get($(this).attr("href"), function(data) {
+                    $('#the_table').html(data)
+                    ajax_paginate()
+                });
+            });
+        }
+
+        function filter_watch(){
+            $(".filter-ajax").on('blur',function(e){
+                e.stopImmediatePropagation()
+                
+                if($(this).val().length>0){
+                    form = $(this).parents('form') //.submit() 
+                    url = form.attr('action')
+                    data = form.serialize()
+                    data = data.replace(/&?[^=&]+=(&|$)/g,'');
+                    
+                    $.get(url, data, function(response) {
+                        $('#the_table').html(response.table)
+                        ajax_paginate()
+                    });
+                }
+                tab_stop(e)
+            })
+        }
+
+        function filter_reset(){
+            $("#filter-reset").on("click", function(){
+                url = $('form[name="filter-form"]').attr("action")
+                $.get(url, function(response) {
+                    $('#the_table').html(response.table)
+                    $('#navigation').html(response.navigation)
+                    ajax_paginate()
+                });
+                $('form[name="filter-form"] .filter-ajax').each(function(e, item){
+                    $(item).val("")
+                })
+            })
+        }
+
+        function tab_stop(e){
+            var tab_stop = $(e.target).attr('tab-stop');
+            if(tab_stop !== undefined){
+                console.log("stop")
+                parent = $(e.target).parents("#head_filter")
+                parent.find('input').first().focus()
+            }else{
+                console.log("no stop")
+            }
+        }
+        // https://stackoverflow.com/questions/33951486/how-to-remove-browsers-functions-from-tabindex-flow
+        
+
+        
+        
+    </script>
+
+{%endblock%}
 <div class="row mb-4">
     {% if error %}
         <h1 class="text-center alert alert-danger">{{ error }}</h1>
     {% else %}
-        <table class="table table-striped">
-            <thead>
-            <tr>
-                <th>Host</th>
-                <th>Method</th>
-                <th>Path</th>
-                <th>Exception</th>
-                <th>Last seen</th>
-                <th>Occurrences</th>
-                <th>Action</th>
-            </tr>
-            </thead>
-            <tbody>
-            {% for error in errors.items %}
-                <tr>
-                    <td>{{ error.host }}</td>
-                    <td>{{ error.method }}</td>
-                    <td>
-                        <a class="view-link" href="{% url 'view_error' rhash=error.hash %}">
-                            {{ error.path|truncatechars:30 }}
-                        </a>
-                    </td>
-                    <td>{{ error.exception_name }}</td>
-                    <td>{{ error.last_seen }}</td>
-                    <td>{{ error.count }}</td>
-                    <td>
-                        <a href="{% url 'delete_error' rhash=error.hash %}"
-                           class="delete btn btn-danger btn-sm">Delete</a>
-                    </td>
-                </tr>
-            {% endfor %}
-            </tbody>
-        </table>
+    <div class="col-md-12">
+        <form method="GET" id="my_form" action="/error_tracker/" name="filter-form">
+            <table class="table table-striped border-1 w-100">
+                <thead>
+                    <th>Host</th>
+                    <th width="2%">Method</th>
+                    <th>Path</th>
+                    <th>Exception</th>
+                    <th>Last seen</th>
+                    <th width="7%">#</th>
+                    <th>Action</th>
+                </thead>
+                <thead id="head_filter">
+                    <td><input form='my_form' value="" type="text" name="host" id="id_host" class="form-control  filter-ajax"></td>
+                    <td><input form='my_form' value="" type="text" name="method" id="id_method" class="form-control  filter-ajax"></td>
+                    <td><input form='my_form' value="" type="text" name="path" id="id_path" class="form-control  filter-ajax"></td>
+                    <td><input form='my_form' value="" type="text" name="exception_name" id="id_exception_name" class="form-control  filter-ajax"></td>
+                    <td><input form='my_form' value="" type="text" name="last_seen" id="id_last_seen" class="form-control  filter-ajax"></td>
+                    <td><input form='my_form' value="" type="text" name="count" id="id_count" class="form-control  filter-ajax" tab-stop></td>
+                    <td><a tabindex="0" id='filter-reset' class="form-control btn btn-primary mb-2 mr-sm-2" >Reset</a></td>
+                </thead>
+                <tbody id='the_table' class="w-100">
+                    {% include 'error_tracker/partials/partial_table.html' %}
+                </tbody>
+            
+            </table>
+        </form>
+    </div>
         {% if prev_url or next_url %}
             <hr>
-            <div>
-                <div style="margin: 0 auto;text-align: center;">
-                    {% if prev_url %}
-                        <a href="{{ prev_url }}" style="{% if next_url %}margin-right: 10px{% endif %}">
-                            <i class="glyphicon glyphicon-circle-arrow-left"></i> Newer exceptions
-                        </a>
-                    {% endif %}
-                    {% if next_url %}
-                        <a href="{{ next_url }}" style="{% if prev_url %}margin-left: 10px;{% endif %}">
-                            Older exceptions <i class="glyphicon glyphicon-circle-arrow-right"></i>
-                        </a>
-                    {% endif %}
-                </div>
+            <div id='navigations'>
+                {% include 'error_tracker/partials/navigation.html' %}
             </div>
+          
         {% endif %}
     {% endif %}
 </div>

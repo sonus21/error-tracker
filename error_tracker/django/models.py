@@ -34,8 +34,18 @@ class ErrorModel(models.Model, ModelMixin):
     ticket_raised = models.BooleanField(default=False)
 
     @classmethod
-    def get_exceptions_per_page(cls, page_number=1):
-        records = cls.objects.all().order_by('last_seen')
+    def get_exceptions_per_page(cls, query):
+        if 'page' in query:
+            page_number = query['page']
+            del query['page']
+        else:
+            page_number = 1
+
+        if not query:
+            records = cls.objects.all().order_by('last_seen')
+        else:
+            records = cls.objects.filter(**query).order_by('last_seen')
+
         paginator = Paginator(records, EXCEPTION_APP_DEFAULT_LIST_SIZE)
         try:
             page = paginator.page(page_number)
