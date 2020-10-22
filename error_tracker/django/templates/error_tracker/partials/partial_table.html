@@ -1,3 +1,4 @@
+{% load i18n %}    
     {% for error in errors.items %}
         <tr>
             <td>{{ error.host }}</td>
@@ -12,7 +13,7 @@
             <td>{{ error.count }}</td>
             <td>
                 <a href="{% url 'delete_error' rhash=error.hash %}"
-                   class="delete btn btn-danger btn-sm">Delete</a>
+                   class="delete btn btn-danger btn-sm">{%trans 'Delete' %}</a>
             </td>
         </tr>
     {% endfor %}

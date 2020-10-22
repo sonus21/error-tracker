@@ -37,7 +37,7 @@ def view_list(request):
     """
     title = "App Error"
     query = (request.GET.dict())
-    
+    error = False
     errors = model.get_exceptions_per_page(query)
 
     next_url = reverse('view_errors') + "?page=" + str(errors.next_num) \
@@ -51,14 +51,12 @@ def view_list(request):
             'errors': errors,
         })
 
-        navigation = render_to_string('error_tracker/partials/partial_table.html', {
+        navigation = render_to_string('error_tracker/partials/navigation.html', {
             'next_url': next_url,
             'prev_url': prev_url
         })
 
-        return JsonResponse({
-            'table': table, 
-            'navigation': navigation})
+        return JsonResponse({'table': table, 'navigation': navigation})
 
     return render(request, template_name='error_tracker/list.html',
                   context=dict(error=error, title=title, errors=errors,

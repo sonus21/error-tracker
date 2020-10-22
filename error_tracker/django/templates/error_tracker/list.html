@@ -1,5 +1,5 @@
 {% extends 'error_tracker/base.html' %}
-
+{% load  i18n %}
 {% block content_block %}
 {% block head_script %}
 {{block.super}}
@@ -11,10 +11,12 @@
         })
 
         function ajax_paginate(){
-            $('a.page-link').click(function(e) {
+            console.log("==== CLICK")
+            $('a.pagelink').click(function(e) {
                 e.preventDefault();
-                $.get($(this).attr("href"), function(data) {
-                    $('#the_table').html(data)
+                $.get($(this).attr("href"), function(response) {
+                    $('#the_table').html(response.table)
+                    $('#navigations').html(response.navigation)
                     ajax_paginate()
                 });
             });
@@ -31,7 +33,9 @@
                     data = data.replace(/&?[^=&]+=(&|$)/g,'');
                     
                     $.get(url, data, function(response) {
+                        console.log(response.navigation)
                         $('#the_table').html(response.table)
+                        $('#navigations').html(response.navigation)
                         ajax_paginate()
                     });
                 }
@@ -44,7 +48,7 @@
                 url = $('form[name="filter-form"]').attr("action")
                 $.get(url, function(response) {
                     $('#the_table').html(response.table)
-                    $('#navigation').html(response.navigation)
+                    $('#navigations').html(response.navigation)
                     ajax_paginate()
                 });
                 $('form[name="filter-form"] .filter-ajax').each(function(e, item){
@@ -79,13 +83,13 @@
         <form method="GET" id="my_form" action="/error_tracker/" name="filter-form">
             <table class="table table-striped border-1 w-100">
                 <thead>
-                    <th>Host</th>
-                    <th width="2%">Method</th>
-                    <th>Path</th>
-                    <th>Exception</th>
-                    <th>Last seen</th>
+                    <th>{% trans 'Host' %}</th>
+                    <th width="2%">{% trans 'Method' %}</th>
+                    <th>{% trans 'Path' %}</th>
+                    <th>{% trans 'Exception' %}</th>
+                    <th>{% trans 'Last seen' %}</th>
                     <th width="7%">#</th>
-                    <th>Action</th>
+                    <th>{% trans 'Action' %}</th>
                 </thead>
                 <thead id="head_filter">
                     <td><input form='my_form' value="" type="text" name="host" id="id_host" class="form-control  filter-ajax"></td>
@@ -94,7 +98,7 @@
                     <td><input form='my_form' value="" type="text" name="exception_name" id="id_exception_name" class="form-control  filter-ajax"></td>
                     <td><input form='my_form' value="" type="text" name="last_seen" id="id_last_seen" class="form-control  filter-ajax"></td>
                     <td><input form='my_form' value="" type="text" name="count" id="id_count" class="form-control  filter-ajax" tab-stop></td>
-                    <td><a tabindex="0" id='filter-reset' class="form-control btn btn-primary mb-2 mr-sm-2" >Reset</a></td>
+                    <td><a tabindex="0" id='filter-reset' class="form-control btn btn-primary mb-2 mr-sm-2" >{% trans 'Reset' %}</a></td>
                 </thead>
                 <tbody id='the_table' class="w-100">
                     {% include 'error_tracker/partials/partial_table.html' %}
@@ -102,14 +106,13 @@
             
             </table>
         </form>
-    </div>
+        
         {% if prev_url or next_url %}
-            <hr>
-            <div id='navigations'>
+            <div id='navigations' class='text-center'>
                 {% include 'error_tracker/partials/navigation.html' %}
             </div>
-          
         {% endif %}
+    </div>
     {% endif %}
 </div>
 {% endblock %}

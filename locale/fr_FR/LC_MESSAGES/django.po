@@ -1,0 +1,63 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <contact@tng-concepts.com>, 2020.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2020-10-22 15:02+0200\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: Thierry BOULOGNE <contact@tng-concepts.com>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+
+#: error_tracker/django/apps.py:17
+msgid "Error Monitoring and Exception Tracking"
+msgstr ""
+
+#: error_tracker/django/templates/error_tracker/list.html:86
+msgid "Host"
+msgstr "Hôtesss"
+
+#: error_tracker/django/templates/error_tracker/list.html:87
+msgid "Method"
+msgstr "Méthode"
+
+#: error_tracker/django/templates/error_tracker/list.html:88
+msgid "Path"
+msgstr "Chemin"
+
+#: error_tracker/django/templates/error_tracker/list.html:89
+msgid "Exception"
+msgstr "Erreur"
+
+#: error_tracker/django/templates/error_tracker/list.html:90
+msgid "Last seen"
+msgstr "Dernière occurence"
+
+#: error_tracker/django/templates/error_tracker/list.html:92
+msgid "Action"
+msgstr "Action"
+
+#: error_tracker/django/templates/error_tracker/list.html:101
+msgid "Reset"
+msgstr "Effacer"
+
+#: error_tracker/django/templates/error_tracker/partials/navigation.html:5
+msgid "Newer exceptions"
+msgstr "Suivant"
+
+#: error_tracker/django/templates/error_tracker/partials/navigation.html:9
+msgid "Older exceptions"
+msgstr "Précédent"
+
+#: error_tracker/django/templates/error_tracker/partials/partial_table.html:16
+msgid "Delete"
+msgstr "Supprimer"
