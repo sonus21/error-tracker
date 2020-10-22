@@ -190,6 +190,27 @@ def clean_value(x):
     return x
 
 
+def get_value(key, value):
+    try:
+        # Parse each key, value from headers items and Test if could be "json loaded". If not, we set the correspondant value to empty except for cookie key.
+        json.loads('{"%s":"%s"}' % (key, value))
+    except Exception as e:
+        if key in ["Cookie", "cookie"]:
+            try:
+                from http.cookies import SimpleCookie
+                try:
+                    cookie = SimpleCookie()
+                    cookie.load(value)
+                    value = {k: clean_value(v) for k, v in cookie.items()}
+                except Exception as e:
+                    value = ""
+            except ImportError:
+                pass
+        else:
+            value = ""
+    return value
+
+
 def parse_headers(headers):
     """
     Parse request headers to extract cookie.
@@ -198,19 +219,5 @@ def parse_headers(headers):
     """
     new_headers = {}
     for key, value in headers.items():
-        try:
-            # Pare each key, value from headers items and Test if could be "json loaded". If not, we set the correspondant value to empty except for cookie key.
-            json.loads('{"%s":"%s"}' % (key, value))
-        except Exception as e:
-            if key in ["Cookie", "cookie"]:
-                try:
-                    cookie = SimpleCookie()
-                    cookie.load(value)
-                    value = {k: clean_value(v) for k, v in cookie.items()}
-                except Exception as e:
-                    value = ""
-            else:
-                value = ""
-        
-        new_headers[key] = value
+        new_headers[key] = get_value(key, value)
     return new_headers

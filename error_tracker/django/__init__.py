@@ -43,8 +43,7 @@ def get_exception_model():
         raise warnings.warn(
             "APP_ERROR_DB_MODEL refers to model '%s' that has not been installed" % model_path
         )
-    warnings.warn("APP_ERROR_DB_MODEL is set but not usable using default model")
-    return ErrorModel
+    raise Exception("APP_ERROR_DB_MODEL is set but not usable")
 
 
 def get_masking_module():
