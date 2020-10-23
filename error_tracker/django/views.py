@@ -36,10 +36,10 @@ def view_list(request):
     :return:  rendered template
     """
     title = "App Error"
-    query = (request.GET.dict())
+    query = {k: v for k, v in request.GET.dict().items() if len(v) > 0}
     error = False
     errors = model.get_exceptions_per_page(query)
-
+   
     next_url = reverse('view_errors') + "?page=" + str(errors.next_num) \
         if errors.has_next else None
 

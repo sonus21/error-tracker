@@ -30,8 +30,7 @@
                     form = $(this).parents('form') //.submit() 
                     url = form.attr('action')
                     data = form.serialize()
-                    data = data.replace(/&?[^=&]+=(&|$)/g,'');
-                    
+                     
                     $.get(url, data, function(response) {
                         console.log(response.navigation)
                         $('#the_table').html(response.table)
