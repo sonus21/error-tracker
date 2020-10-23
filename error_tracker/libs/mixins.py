@@ -78,7 +78,7 @@ class ModelMixin(object):
 
     @classmethod
     @abc.abstractmethod
-    def get_exceptions_per_page(cls, page_number=1):
+    def get_exceptions_per_page(cls, page_number=1, **kwargs):
         """
         An object having these properties,
         has_next, next_num, has_prev, prev_num and items
