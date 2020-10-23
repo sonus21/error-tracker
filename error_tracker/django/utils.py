@@ -8,7 +8,6 @@
 
 import re
 import json
-
 from django.http import RawPostDataException
 
 from error_tracker.libs.mixins import ContextBuilderMixin, NotificationMixin, ViewPermissionMixin
@@ -56,8 +55,8 @@ class DefaultDjangoContextBuilder(ContextBuilderMixin):
     def _get_headers(request):
         if request is not None:
             try:
-                headers = request.headers.dict()
-            except AttributeError:
+                headers = parse_headers(request.headers)
+            except AttributeError as e:
                 regex = re.compile('^HTTP_')
                 headers = dict((regex.sub('', header), value) for (header, value)
                                in request.META.items() if header.startswith('HTTP_'))
@@ -88,6 +87,8 @@ class DjangoNotification(NotificationMixin):
                recipient_list=None):
         if recipient_list is not None and from_email is not None:
             send_mail(email_subject, email_body, from_email, recipient_list, fail_silently=True)
+            exception.notification_sent = True
+            exception.save()
 
 
 class DefaultDjangoViewPermission(ViewPermissionMixin):
@@ -182,3 +183,41 @@ def capture_exception(request=None, exception=None, additional_context=None):
     from error_tracker.django.middleware import error_tracker
     error_tracker.capture_exception(request=request, exception=exception,
                                     additional_context=additional_context)
+
+
+def clean_value(x):
+    x = x.value.replace('[["', "").replace('"]]', "").replace('"', "")
+    return x
+
+
+def get_value(key, value):
+    try:
+        # Parse each key, value from headers items and Test if could be "json loaded". If not, we set the correspondant value to empty except for cookie key.
+        json.loads('{"%s":"%s"}' % (key, value))
+    except Exception as e:
+        if key in ["Cookie", "cookie"]:
+            try:
+                from http.cookies import SimpleCookie
+                try:
+                    cookie = SimpleCookie()
+                    cookie.load(value)
+                    value = {k: clean_value(v) for k, v in cookie.items()}
+                except Exception as e:
+                    value = ""
+            except ImportError:
+                pass
+        else:
+            value = ""
+    return value
+
+
+def parse_headers(headers):
+    """
+    Parse request headers to extract cookie.
+    :param headers (request headers])
+    :return: [dict]: return parse header with cookie as dict
+    """
+    new_headers = {}
+    for key, value in headers.items():
+        new_headers[key] = get_value(key, value)
+    return new_headers

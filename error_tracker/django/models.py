@@ -2,7 +2,7 @@
 #
 #    Django error tracker default model
 #
-#    :copyright: 2019 Sonu Kumar
+#    :copyright: 2020 Sonu Kumar
 #    :license: BSD-3-Clause
 #
 from django.core.paginator import Paginator, EmptyPage
@@ -16,9 +16,9 @@ from collections import namedtuple
 Page = namedtuple("Page", "has_next, next_num, has_prev, prev_num, items ")
 
 
-class ErrorModel(models.Model, ModelMixin):
+class AbstractErrorModel(models.Model, ModelMixin):
     """
-    Model to track exceptions
+       Base Model to track exceptions
     """
     hash = models.CharField(max_length=64, primary_key=True)
     host = models.CharField(max_length=1024)
@@ -30,6 +30,8 @@ class ErrorModel(models.Model, ModelMixin):
     count = models.IntegerField(default=0)
     created_on = models.DateTimeField(auto_now=True)
     last_seen = models.DateTimeField(auto_now=True, db_index=True)
+    notification_sent = models.BooleanField(default=False)
+    ticket_raised = models.BooleanField(default=False)
 
     @classmethod
     def get_exceptions_per_page(cls, page_number=1):
@@ -62,6 +64,8 @@ class ErrorModel(models.Model, ModelMixin):
                 obj.count += 1
                 obj.last_seen = now()
                 obj.save(update_fields=['count', 'last_seen'])
+
+            return obj
         except Exception:
             print_exc()
 
@@ -71,4 +75,13 @@ class ErrorModel(models.Model, ModelMixin):
 
     class Meta:
         db_table = 'exceptions'
+        abstract = True
+
+
+class ErrorModel(AbstractErrorModel):
+    """
+    Default Model to track exceptions
+    """
+
+    class Meta(AbstractErrorModel.Meta):
         swappable = 'APP_ERROR_DB_MODEL'
