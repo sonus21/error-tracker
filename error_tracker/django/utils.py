@@ -9,8 +9,6 @@
 import re
 import json
 from django.http import RawPostDataException
-from http.cookies import SimpleCookie
-
 from error_tracker.libs.mixins import ContextBuilderMixin, NotificationMixin, ViewPermissionMixin
 from error_tracker.libs.utils import get_context_dict
 from django.core.mail import send_mail
@@ -198,6 +196,7 @@ def get_value(key, value):
         if key in ["Cookie", "cookie"]:
             try:
                 try:
+                    from http.cookies import SimpleCookie
                     cookie = SimpleCookie()
                     cookie.load(value)
                     value = {k: clean_value(v) for k, v in cookie.items()}
