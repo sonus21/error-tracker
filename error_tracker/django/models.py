@@ -34,7 +34,7 @@ class ErrorModel(models.Model, ModelMixin):
     ticket_raised = models.BooleanField(default=False)
 
     @classmethod
-    def get_exceptions_per_page(cls, query):
+    def get_exceptions_per_page(cls, **query):
         if 'page' in query:
             page_number = query['page']
             del query['page']

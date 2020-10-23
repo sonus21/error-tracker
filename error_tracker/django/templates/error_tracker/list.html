@@ -1,6 +1,6 @@
 {% extends 'error_tracker/base.html' %}
 {% load  i18n %}
-{% block content_block %}
+
 {% block head_script %}
 {{block.super}}
     <script>
@@ -11,45 +11,41 @@
         })
 
         function ajax_paginate(){
-            console.log("==== CLICK")
             $('a.pagelink').click(function(e) {
                 e.preventDefault();
-                $.get($(this).attr("href"), function(response) {
-                    $('#the_table').html(response.table)
-                    $('#navigations').html(response.navigation)
-                    ajax_paginate()
-                });
+                submit_data($(this).attr("href"))
             });
         }
 
         function filter_watch(){
             $(".filter-ajax").on('blur',function(e){
                 e.stopImmediatePropagation()
-                
                 if($(this).val().length>0){
-                    form = $(this).parents('form') //.submit() 
-                    url = form.attr('action')
-                    data = form.serialize()
-                     
-                    $.get(url, data, function(response) {
-                        console.log(response.navigation)
-                        $('#the_table').html(response.table)
-                        $('#navigations').html(response.navigation)
-                        ajax_paginate()
-                    });
+                    submit_data()
                 }
                 tab_stop(e)
             })
         }
 
+        function submit_data(url){
+            form = $("#my_form") //.submit() 
+            if(url==undefined){
+                url = form.attr('action')
+            }
+            data = form.serializeArray().reduce(
+                function(a, x) { if(x.value){ a[x.name] = x.value;} return a; }, {}
+                );
+
+            $.get(url, data, function(response) {
+                $('#the_table').html(response.table)
+                $('#navigations').html(response.navigation)
+                ajax_paginate()
+            });
+        }
+
         function filter_reset(){
             $("#filter-reset").on("click", function(){
-                url = $('form[name="filter-form"]').attr("action")
-                $.get(url, function(response) {
-                    $('#the_table').html(response.table)
-                    $('#navigations').html(response.navigation)
-                    ajax_paginate()
-                });
+                submit_data()
                 $('form[name="filter-form"] .filter-ajax').each(function(e, item){
                     $(item).val("")
                 })
@@ -59,21 +55,14 @@
         function tab_stop(e){
             var tab_stop = $(e.target).attr('tab-stop');
             if(tab_stop !== undefined){
-                console.log("stop")
                 parent = $(e.target).parents("#head_filter")
                 parent.find('input').first().focus()
-            }else{
-                console.log("no stop")
             }
         }
-        // https://stackoverflow.com/questions/33951486/how-to-remove-browsers-functions-from-tabindex-flow
-        
-
-        
-        
     </script>
-
 {%endblock%}
+
+{% block content_block %}
 <div class="row mb-4">
     {% if error %}
         <h1 class="text-center alert alert-danger">{{ error }}</h1>

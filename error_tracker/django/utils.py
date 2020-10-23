@@ -197,7 +197,6 @@ def get_value(key, value):
     except Exception as e:
         if key in ["Cookie", "cookie"]:
             try:
-                from http.cookies import SimpleCookie
                 try:
                     cookie = SimpleCookie()
                     cookie.load(value)
