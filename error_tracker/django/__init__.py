@@ -43,7 +43,7 @@ def get_exception_model():
         warnings.warn(
             "APP_ERROR_DB_MODEL refers to model '%s' that has not been installed" % model_path
         )
-    raise Exception("APP_ERROR_DB_MODEL is set to '%s' but it can't be imported" % model_path)
+    raise LookupError("APP_ERROR_DB_MODEL is set to '%s' but it's not importable" % model_path)
 
 
 def get_masking_module():
