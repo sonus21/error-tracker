@@ -74,7 +74,6 @@ class AbstractErrorModel(models.Model, ModelMixin):
         return cls.objects.filter(pk=rhash).delete()
 
     class Meta:
-        db_table = 'exceptions'
         abstract = True
 
 
@@ -85,3 +84,4 @@ class ErrorModel(AbstractErrorModel):
 
     class Meta(AbstractErrorModel.Meta):
         swappable = 'APP_ERROR_DB_MODEL'
+        db_table = 'exceptions'
