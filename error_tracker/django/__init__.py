@@ -40,7 +40,7 @@ def get_exception_model():
                                     warning_message="Model " + model_path + " is not importable")
         if model is not None:
             return model
-        raise warnings.warn(
+        warnings.warn(
             "APP_ERROR_DB_MODEL refers to model '%s' that has not been installed" % model_path
         )
     raise Exception("APP_ERROR_DB_MODEL is set to '%s' but it can't be imported" % model_path)
