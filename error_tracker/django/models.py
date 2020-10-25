@@ -39,7 +39,7 @@ class ErrorModel(models.Model, ModelMixin):
             if 'page' in query:
                 page_number = query['page']
                 del query['page']
-            query = {"{}__contains".format(k): v for k, v in query.items()}
+            query = {"{}__icontains".format(k): v for k, v in query.items()}
         
         if not query:
             records = cls.objects.all().order_by('last_seen')

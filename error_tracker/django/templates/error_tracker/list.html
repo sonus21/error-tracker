@@ -18,9 +18,9 @@
         }
 
         function filter_watch(){
-            $(".filter-ajax").on('blur',function(e){
+            $(".filter-ajax").on('blur, keyup',function(e){
                 e.stopImmediatePropagation()
-                if($(this).val().length>0){
+                if(e.which == 9 || e.which == 8 || e.which == 13 || $(this).val().length>=3){
                     submit_data()
                 }
                 tab_stop(e)
@@ -45,10 +45,11 @@
 
         function filter_reset(){
             $("#filter-reset").on("click", function(){
-                submit_data()
+                
                 $('form[name="filter-form"] .filter-ajax').each(function(e, item){
                     $(item).val("")
                 })
+                submit_data()
             })
         }
 
