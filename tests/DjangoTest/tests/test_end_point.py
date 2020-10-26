@@ -20,7 +20,7 @@ class ViewTestCase(TestCase, TestBase):
         self.get('/value-error')
         self.post('/post-view')
         html = self.get('/dev', follow=True).content
-        urls = [node.attrib['href'] for node in pyquery.PyQuery(html)('a.view-link, a.delete, a.home-link')]
+        urls = [node.attrib['href'] for node in pyquery.PyQuery(html)('a.view-link, a.home-link, a.delete')]
         # 2 links for delete operation and 2 links to navigate and 1 link to home page
         self.assertEqual(len(urls), 2 + 3)
 
