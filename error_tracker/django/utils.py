@@ -8,7 +8,10 @@
 
 import json
 import re
-from http.cookies import SimpleCookie
+try:
+    from http.cookies import SimpleCookie
+except ImportError:
+    pass
 
 from error_tracker.libs.mixins import (ContextBuilderMixin, NotificationMixin,
                                        ViewPermissionMixin)
