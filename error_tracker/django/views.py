@@ -19,7 +19,7 @@ view_permission = get_view_permission()
 
 
 def has_view_permission(func):
-    @login_required
+    #@login_required
     def wrapper(request, *args, **kwargs):
         if view_permission(request):
             return func(request, *args, **kwargs)
