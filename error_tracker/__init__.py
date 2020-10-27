@@ -6,7 +6,7 @@
 #    :license: BSD-3-Clause
 #
 
-__version__ = '1.1.8'
+__version__ = '2.0.0'
 __author__ = 'Sonu Kumar'
 __email__ = 'sonunitw12@gmail.com'
 
