@@ -1,4 +1,4 @@
-Copyright 2019 Sonu Kumar
+Copyright 2019-2020 Sonu Kumar<sonunitw12@gmail.com>
 
 Redistribution and use in source and binary forms, with or without
 modification, are permitted provided that the following conditions are
