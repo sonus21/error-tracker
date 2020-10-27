@@ -1,0 +1,14 @@
+{% load i18n %}
+
+{% if prev_url %}
+    <a href="{{ prev_url }}" class="pagelink text-white bg-secondary p-2" style="{% if next_url %}margin-right: 10px{% endif %}">
+        <i class="glyphicon glyphicon-circle-arrow-left"></i> {% trans 'Newer exceptions' %} </a>
+{% endif %}
+{% if next_url %}
+    <a href="{{ next_url }}" class="pagelink text-white bg-secondary p-2" style="{% if prev_url %}margin-left: 10px;{% endif %}">
+        {% trans 'Older exceptions' %}  <i class="glyphicon glyphicon-circle-arrow-right"></i>
+    </a>
+{% endif %}
+
+
+    

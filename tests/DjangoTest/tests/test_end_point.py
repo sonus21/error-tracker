@@ -20,17 +20,17 @@ class ViewTestCase(TestCase, TestBase):
         self.get('/value-error')
         self.post('/post-view')
         html = self.get('/dev', follow=True).content
-        urls = [node.attrib['href'] for node in pyquery.PyQuery(html)('a')]
+        urls = [node.attrib['href'] for node in pyquery.PyQuery(html)('a.view-link, a.home-link, a.delete')]
         # 2 links for delete operation and 2 links to navigate and 1 link to home page
         self.assertEqual(len(urls), 2 + 3)
 
-        urls = [node.attrib['href'] for node in pyquery.PyQuery(html)('.view-link')]
+        urls = [node.attrib['href'] for node in pyquery.PyQuery(html)('a.view-link')]
         self.assertEqual(len(urls), 2)
 
     def test_detail_view(self):
         self.get('/value-error')
         html = self.get('/dev', follow=True).content
-        url = [node.attrib['href'] for node in pyquery.PyQuery(html)('.view-link')][0]
+        url = [node.attrib['href'] for node in pyquery.PyQuery(html)('a.view-link')][0]
         response = self.get(url).content
         row = pyquery.PyQuery(response)('.mb-4')
         self.assertEqual(2, len(row))
@@ -60,22 +60,22 @@ class ViewTestCase(TestCase, TestBase):
                                                exception.traceback)
 
         response = self.get('/dev', follow=True).content
-        urls = [node.attrib['href'] for node in pyquery.PyQuery(response)('a')]
+        urls = [node.attrib['href'] for node in pyquery.PyQuery(response)('a.view-link, a.delete, a.pagelink, a.home-link')]
         self.assertEqual(len(urls), settings.EXCEPTION_APP_DEFAULT_LIST_SIZE * 2 + 2)
         self.assertTrue('/dev/?page=2' in urls)
 
         response = self.get('/dev/?page=2', follow=True).content
-        urls = [node.attrib['href'] for node in pyquery.PyQuery(response)('a')]
+        urls = [node.attrib['href'] for node in pyquery.PyQuery(response)('a.view-link, a.delete, a.pagelink, a.home-link')]
         self.assertEqual(len(urls), settings.EXCEPTION_APP_DEFAULT_LIST_SIZE * 2 + 3)
         self.assertTrue('/dev/?page=1' in urls)
         self.assertTrue('/dev/?page=3' in urls)
 
         response = self.get('/dev/?page=5', follow=True).content
-        urls = [node.attrib['href'] for node in pyquery.PyQuery(response)('a')]
+        urls = [node.attrib['href'] for node in pyquery.PyQuery(response)('a.view-link, a.delete, a.pagelink, a.home-link')]
         self.assertTrue('/dev/?page=4' in urls)
 
         response = self.get('/dev/?page=6', follow=True).content
-        urls = [node.attrib['href'] for node in pyquery.PyQuery(response)('a')]
+        urls = [node.attrib['href'] for node in pyquery.PyQuery(response)('a.view-link, a.delete, a.pagelink, a.home-link')]
         self.assertEqual(len(urls), 2)
 
 

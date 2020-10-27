@@ -1,60 +1,107 @@
 {% extends 'error_tracker/base.html' %}
+{% load  i18n %}
+
+{% block head_script %}
+{{block.super}}
+    <script>
+        $(document).ready(function(){
+            ajax_paginate()
+            filter_watch()
+            filter_reset()
+        })
+
+        function ajax_paginate(){
+            $('a.pagelink').click(function(e) {
+                e.preventDefault();
+                submit_data($(this).attr("href"))
+            });
+        }
+
+        function filter_watch(){
+            $(".filter-ajax").on('blur, keyup',function(e){
+                e.stopImmediatePropagation()
+                if(e.which == 9 || e.which == 8 || e.which == 13 || $(this).val().length>=3){
+                    submit_data()
+                }
+                tab_stop(e)
+            })
+        }
+
+        function submit_data(url){
+            form = $("#my_form") //.submit() 
+            if(url==undefined){
+                url = form.attr('action')
+            }
+            data = form.serializeArray().reduce(
+                function(a, x) { if(x.value){ a[x.name] = x.value;} return a; }, {}
+                );
+
+            $.get(url, data, function(response) {
+                $('#the_table').html(response.table)
+                $('#navigations').html(response.navigation)
+                ajax_paginate()
+            });
+        }
+
+        function filter_reset(){
+            $("#filter-reset").on("click", function(){
+                
+                $('form[name="filter-form"] .filter-ajax').each(function(e, item){
+                    $(item).val("")
+                })
+                submit_data()
+            })
+        }
+
+        function tab_stop(e){
+            var tab_stop = $(e.target).attr('tab-stop');
+            if(tab_stop !== undefined){
+                parent = $(e.target).parents("#head_filter")
+                parent.find('input').first().focus()
+            }
+        }
+    </script>
+{%endblock%}
 
 {% block content_block %}
 <div class="row mb-4">
     {% if error %}
         <h1 class="text-center alert alert-danger">{{ error }}</h1>
     {% else %}
-        <table class="table table-striped">
-            <thead>
-            <tr>
-                <th>Host</th>
-                <th>Method</th>
-                <th>Path</th>
-                <th>Exception</th>
-                <th>Last seen</th>
-                <th>Occurrences</th>
-                <th>Action</th>
-            </tr>
-            </thead>
-            <tbody>
-            {% for error in errors.items %}
-                <tr>
-                    <td>{{ error.host }}</td>
-                    <td>{{ error.method }}</td>
-                    <td>
-                        <a class="view-link" href="{% url 'view_error' rhash=error.hash %}">
-                            {{ error.path|truncatechars:30 }}
-                        </a>
-                    </td>
-                    <td>{{ error.exception_name }}</td>
-                    <td>{{ error.last_seen }}</td>
-                    <td>{{ error.count }}</td>
-                    <td>
-                        <a href="{% url 'delete_error' rhash=error.hash %}"
-                           class="delete btn btn-danger btn-sm">Delete</a>
-                    </td>
-                </tr>
-            {% endfor %}
-            </tbody>
-        </table>
+    <div class="col-md-12">
+        <form method="GET" id="my_form" action="/error_tracker/" name="filter-form">
+            <table class="table table-striped border-1 w-100">
+                <thead>
+                    <th>{% trans 'Host' %}</th>
+                    <th width="2%">{% trans 'Method' %}</th>
+                    <th>{% trans 'Path' %}</th>
+                    <th>{% trans 'Exception' %}</th>
+                    <th>{% trans 'Last seen' %}</th>
+                    <th width="7%">#</th>
+                    <th>{% trans 'Action' %}</th>
+                </thead>
+                <thead id="head_filter">
+                    <td><input form='my_form' value="" type="text" name="host" id="id_host" class="form-control  filter-ajax"></td>
+                    <td><input form='my_form' value="" type="text" name="method" id="id_method" class="form-control  filter-ajax"></td>
+                    <td><input form='my_form' value="" type="text" name="path" id="id_path" class="form-control  filter-ajax"></td>
+                    <td><input form='my_form' value="" type="text" name="exception_name" id="id_exception_name" class="form-control  filter-ajax"></td>
+                    <td><input form='my_form' value="" type="text" name="last_seen" id="id_last_seen" class="form-control  filter-ajax"></td>
+                    <td><input form='my_form' value="" type="text" name="count" id="id_count" class="form-control  filter-ajax" tab-stop></td>
+                    <td><a tabindex="0" id='filter-reset' class="form-control btn btn-primary mb-2 mr-sm-2" >{% trans 'Reset' %}</a></td>
+                </thead>
+                <tbody id='the_table' class="w-100">
+                    {% include 'error_tracker/partials/partial_table.html' %}
+                </tbody>
+            
+            </table>
+        </form>
+        
         {% if prev_url or next_url %}
-            <hr>
-            <div>
-                <div style="margin: 0 auto;text-align: center;">
-                    {% if prev_url %}
-                        <a href="{{ prev_url }}" style="{% if next_url %}margin-right: 10px{% endif %}">
-                            <i class="glyphicon glyphicon-circle-arrow-left"></i> Newer exceptions
-                        </a>
-                    {% endif %}
-                    {% if next_url %}
-                        <a href="{{ next_url }}" style="{% if prev_url %}margin-left: 10px;{% endif %}">
-                            Older exceptions <i class="glyphicon glyphicon-circle-arrow-right"></i>
-                        </a>
-                    {% endif %}
-                </div>
+            <div id='navigations' class='text-center'>
+                {% include 'error_tracker/partials/navigation.html' %}
             </div>
         {% endif %}
+    </div>
     {% endif %}
 </div>
 {% endblock %}

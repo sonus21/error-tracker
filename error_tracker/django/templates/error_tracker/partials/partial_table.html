@@ -1,0 +1,19 @@
+{% load i18n %}    
+    {% for error in errors.items %}
+        <tr>
+            <td>{{ error.host }}</td>
+            <td width="2%">{{ error.method }}</td>
+            <td>
+                <a class="view-link" href="{% url 'view_error' rhash=error.hash %}">
+                    {{ error.path|truncatechars:30 }}
+                </a>
+            </td>
+            <td>{{ error.exception_name }}</td>
+            <td>{{ error.last_seen }}</td>
+            <td>{{ error.count }}</td>
+            <td>
+                <a href="{% url 'delete_error' rhash=error.hash %}"
+                   class="delete btn btn-danger btn-sm">{%trans 'Delete' %}</a>
+            </td>
+        </tr>
+    {% endfor %}
