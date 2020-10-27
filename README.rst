@@ -182,7 +182,7 @@ Tests
 To run the tests, from the project directory, simply::
 
     pip install -r requirements-dev.txt
-    bash tests/run-tests.sh
+    bash run-tests.sh
 
 You should see output similar to::
 

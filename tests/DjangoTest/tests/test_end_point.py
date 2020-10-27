@@ -60,7 +60,6 @@ class ViewTestCase(TestCase, TestBase):
                                                exception.traceback)
 
         response = self.get('/dev', follow=True).content
-       
         urls = [node.attrib['href'] for node in pyquery.PyQuery(response)('a.view-link, a.delete, a.pagelink, a.home-link')]
         self.assertEqual(len(urls), settings.EXCEPTION_APP_DEFAULT_LIST_SIZE * 2 + 2)
         self.assertTrue('/dev/?page=2' in urls)

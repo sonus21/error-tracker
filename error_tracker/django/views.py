@@ -23,6 +23,7 @@ def has_view_permission(func):
         if view_permission(request):
             return func(request, *args, **kwargs)
         return HttpResponse(status=401)
+
     return wrapper
 
 
