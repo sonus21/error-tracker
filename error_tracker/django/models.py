@@ -49,7 +49,7 @@ class AbstractErrorModel(models.Model, ModelMixin):
 
     @classmethod
     def get_entity(cls, rhash):
-        return cls.objects.get(pk=rhash)
+        return cls.objects.get(hash=rhash)
 
     @classmethod
     def create_or_update_entity(cls, rhash, host, path, method, request_data, exception_name, traceback):
@@ -71,7 +71,7 @@ class AbstractErrorModel(models.Model, ModelMixin):
 
     @classmethod
     def delete_entity(cls, rhash):
-        return cls.objects.filter(pk=rhash).delete()
+        return cls.objects.filter(hash=rhash).delete()
 
     class Meta:
         abstract = True
