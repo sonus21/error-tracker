@@ -8,13 +8,8 @@
 
 import json
 import re
-try:
-    from http.cookies import SimpleCookie
-except ImportError:
-    pass
 
-from error_tracker.libs.mixins import (ContextBuilderMixin, NotificationMixin,
-                                       ViewPermissionMixin)
+from error_tracker.libs.mixins import ContextBuilderMixin, NotificationMixin, ViewPermissionMixin
 from error_tracker.libs.utils import get_context_dict
 
 from django.core.mail import send_mail
@@ -95,6 +90,7 @@ class DjangoNotification(NotificationMixin):
             send_mail(email_subject, email_body, from_email, recipient_list, fail_silently=True)
             exception.notification_sent = True
             exception.save()
+
 
 class DefaultDjangoViewPermission(ViewPermissionMixin):
 
@@ -202,6 +198,7 @@ def get_value(key, value):
     except Exception as e:
         if key in ["Cookie", "cookie"]:
             try:
+                from http.cookies import SimpleCookie
                 try:
                     cookie = SimpleCookie()
                     cookie.load(value)
