@@ -106,6 +106,17 @@ Setting details
         Class must not have any constructor parameters and should implement __call__ method.
 
 
+- Admin site support.
+    By default is False
+
+
+    .. code ::
+
+        USE_DJANGO_ADMIN_SITE = True
+
+
+
+
 Manual Exception Tracking
 ~~~~~~~~~~~~~~~~~~~~~~~~~
 

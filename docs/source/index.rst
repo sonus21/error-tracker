@@ -24,6 +24,15 @@ Features
 .. image:: images/detail-page.png
     :alt: Detailed Exception page
 
+**Admin dashboard**
+
+.. image:: images/admin1.png
+    :alt: Admin dashboard
+
+
+.. image:: images/admin2.png
+    :alt: Admin dashboard
+
 
 
 Quick start
@@ -141,6 +150,7 @@ We need to update settings.py file as
 -  Add Middleware :code:`error_tracker.django.middleware.ExceptionTrackerMiddleWare` for exception tracking [1]_.
 -  Other configs related to notification
 -  Add URLs to the list of URL patterns
+-  Enable django admin site (optional).
 
 .. [1] This should be added at the end so that it can process exception 1st in the middleware call stack.
 
@@ -178,6 +188,12 @@ We need to add URLs to the urls.py so that we can browse the default pages provi
         ...
         url("dev/", include(urls)),
     ]
+
+To enable the error tracker in the admin site add this line in your settings.
+
+.. code::
+
+    USE_DJANGO_ADMIN_SITE = True
 
 Using With Python App (NO WEB SERVER)
 -------------------------------------
