@@ -1,5 +1,0 @@
-six
-Flask
-Flask-SQLAlchemy
-Django
-djangorestframework

@@ -51,7 +51,7 @@ setup(
     },
     tests_require=[
         "Flask-Mail",
-        'pyquery'
+        'pyquery',
         "Django",
         "djangorestframework",
         "Flask",
