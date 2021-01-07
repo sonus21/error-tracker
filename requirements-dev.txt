@@ -1,7 +1,7 @@
 Flask
 Flask-Mail
 Flask-SQLAlchemy
-pyquery
+pyquery==1.4.1
 Django
 six
 coveralls
