@@ -116,4 +116,4 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 APP_ERROR_DB_MODEL = "core.models.TestErrorModel"
-USE_DJANGO_ADMIN_SITE = True
+APP_ERROR_USE_DJANGO_ADMIN_SITE = True

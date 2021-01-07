@@ -193,7 +193,7 @@ To enable the error tracker in the admin site add this line in your settings.
 
 .. code::
 
-    USE_DJANGO_ADMIN_SITE = True
+    APP_ERROR_USE_DJANGO_ADMIN_SITE = True
 
 Using With Python App (NO WEB SERVER)
 -------------------------------------

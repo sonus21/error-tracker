@@ -54,14 +54,7 @@ class DefaultDjangoContextBuilder(ContextBuilderMixin):
 
     @staticmethod
     def _get_headers(request):
-        if request is not None:
-            try:
-                headers = parse_headers(request.headers)
-            except AttributeError as e:
-                regex = re.compile('^HTTP_')
-                headers = dict((regex.sub('', header), value) for (header, value)
-                               in request.META.items() if header.startswith('HTTP_'))
-            return headers
+        return _HeaderExtractor(request).get_headers()
 
     @staticmethod
     def _get_args(request):
@@ -191,34 +184,52 @@ def clean_value(x):
     return x
 
 
-def get_value(key, value):
-    try:
-        # Parse each key, value from headers items and Test if could be "json loaded". If not, we set the correspondant value to empty except for cookie key.
-        json.loads('{"%s":"%s"}' % (key, value))
-    except Exception as e:
-        if key in ["Cookie", "cookie"]:
-            try:
-                from http.cookies import SimpleCookie
+class _HeaderExtractor(object):
+    ignored_keys = frozenset(['sec_ch_ua'])
+    regex = re.compile('^HTTP_')
+
+    def __init__(self, request):
+        self.request = request
+
+    def _get_raw_headers(self):
+        if self.request is None:
+            return {}
+        try:
+            return self.request.headers
+        except AttributeError:
+            return dict((self.regex.sub('', header), value) for (header, value)
+                        in self.request.META.items() if header.startswith('HTTP_'))
+
+    def _can_be_skipped(self, header_name, header_value):
+        return header_name.lower() in self.ignored_keys
+
+    def get_headers(self):
+        headers = self._get_raw_headers()
+        new_headers = {}
+        for key, value in headers.items():
+            if self._can_be_skipped(key, value):
+                continue
+            new_headers[key] = self.get_value(key, value)
+        return new_headers
+
+    @staticmethod
+    def get_value(key, value):
+        try:
+            # Parse each key, value from headers items and Test if could be "json loaded".
+            # If not, we set the correspondent value to empty except for cookie key.
+            json.loads('{"%s":"%s"}' % (key, value))
+        except Exception as e:
+            if key.lower() == "cookie":
                 try:
-                    cookie = SimpleCookie()
-                    cookie.load(value)
-                    value = {k: clean_value(v) for k, v in cookie.items()}
-                except Exception as e:
-                    value = ""
-            except ImportError:
-                pass
-        else:
-            value = ""
-    return value
-
-
-def parse_headers(headers):
-    """
-    Parse request headers to extract cookie.
-    :param headers (request headers])
-    :return: [dict]: return parse header with cookie as dict
-    """
-    new_headers = {}
-    for key, value in headers.items():
-        new_headers[key] = get_value(key, value)
-    return new_headers
+                    from http.cookies import SimpleCookie
+                    try:
+                        cookie = SimpleCookie()
+                        cookie.load(value)
+                        value = {k: clean_value(v) for k, v in cookie.items()}
+                    except Exception as e:
+                        value = ""
+                except ImportError:
+                    pass
+            else:
+                value = ""
+        return value

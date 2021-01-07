@@ -46,7 +46,7 @@ class ModelMixin(object):
         return "'%s' '%s' %s" % (self.host, self.path, self.count)
 
     def __unicode__(self):
-        return self.__str__()
+        return "'%s' '%s' %s" % (self.host, self.path, self.count)
 
     def __repr__(self):
         return "ModelMixin(%s)" % self.__str__()

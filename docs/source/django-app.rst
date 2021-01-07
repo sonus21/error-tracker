@@ -107,12 +107,12 @@ Setting details
 
 
 - Admin site support.
-    By default is False
+    By default this is False, it should be used when default model is used, for custom model you should registered yourself.
 
 
     .. code ::
 
-        USE_DJANGO_ADMIN_SITE = True
+        APP_ERROR_USE_DJANGO_ADMIN_SITE = True
 
 
 

@@ -2,7 +2,7 @@
 #
 #    Django error tracker default settings
 #
-#    :copyright: 2020 Sonu Kumar
+#    :copyright: 2021 Sonu Kumar
 #    :license: BSD-3-Clause
 #
 
@@ -49,5 +49,4 @@ APP_ERROR_NOTIFICATION_ONCE = get('APP_ERROR_NOTIFICATION_ONCE', False)
 # Raise ticket once
 APP_ERROR_TICKET_ONCE = get('APP_ERROR_NOTIFICATION_ONCE', False)
 # Use django admin site
-USE_DJANGO_ADMIN_SITE = get('USE_DJANGO_ADMIN_SITE', False)
-
+APP_ERROR_USE_DJANGO_ADMIN_SITE = get('APP_ERROR_USE_DJANGO_ADMIN_SITE', False)

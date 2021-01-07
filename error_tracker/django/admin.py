@@ -1,10 +1,13 @@
 from .models import ErrorModel
 from django.contrib import admin
-from .settings import USE_DJANGO_ADMIN_SITE
+from .settings import APP_ERROR_USE_DJANGO_ADMIN_SITE
 
-if USE_DJANGO_ADMIN_SITE:
+if APP_ERROR_USE_DJANGO_ADMIN_SITE:
     @admin.register(ErrorModel)
     class ErrorModelAdmin(admin.ModelAdmin):
+        def has_add_permission(self, request):
+            return False
+
         date_hierarchy = 'last_seen'
         list_display = (
             'host',
@@ -30,5 +33,5 @@ if USE_DJANGO_ADMIN_SITE:
                 extra_context = {
                     'obj': ErrorModel.objects.get(pk=object_id)
                 }
-            return super().changeform_view(request, object_id=object_id,
-                                           form_url=form_url, extra_context=extra_context)
+            return super(ErrorModelAdmin, self).changeform_view(request, object_id=object_id,
+                                                                form_url=form_url, extra_context=extra_context)
