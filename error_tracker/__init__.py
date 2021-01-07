@@ -31,7 +31,7 @@ try:
 
     djangoInstalled = True
 except ImportError as e:
-    raise e
+    pass
 
 if djangoInstalled:
     from error_tracker.django import *

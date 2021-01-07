@@ -17,6 +17,7 @@ import sys
 import datetime
 
 sys.path.insert(0, os.path.abspath('../../error_tracker'))
+sys.path.insert(0, os.path.abspath('../..'))
 print (sys.path)
 import error_tracker
 
