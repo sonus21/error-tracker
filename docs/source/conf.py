@@ -14,20 +14,21 @@
 #
 import os
 import sys
-sys.path.insert(0, os.path.abspath('../error_tracker'))
+import datetime
 
+sys.path.insert(0, os.path.abspath('../error_tracker'))
+import error_tracker
 
 # -- Project information -----------------------------------------------------
 
 project = u'error-tracker'
-copyright = u'2019, Sonu Kumar'
-author = u'Sonu Kumar'
+copyright = str(datetime.datetime.now().year) + u', Sonu Kumar'
+author = error_tracker.__author__
 
 # The short X.Y version
 version = u''
 # The full version, including alpha/beta/rc tags
-release = u'1.0'
-
+release = error_tracker.__version__
 
 # -- General configuration ---------------------------------------------------
 
@@ -74,7 +75,6 @@ exclude_patterns = []
 # The name of the Pygments (syntax highlighting) style to use.
 pygments_style = 'sphinx'
 
-
 # -- Options for HTML output -------------------------------------------------
 
 # The theme to use for HTML and HTML Help pages.  See the documentation for
@@ -109,7 +109,6 @@ html_static_path = ['_static']
 # Output file base name for HTML help builder.
 htmlhelp_basename = 'error-tracker-doc'
 
-
 # -- Options for LaTeX output ------------------------------------------------
 
 latex_elements = {
@@ -138,7 +137,6 @@ latex_documents = [
      u'Sonu Kumar', 'manual'),
 ]
 
-
 # -- Options for manual page output ------------------------------------------
 
 # One entry per manual page. List of tuples
@@ -147,7 +145,6 @@ man_pages = [
     (master_doc, 'error-tracker', u'error-tracker Documentation',
      [author], 1)
 ]
-
 
 # -- Options for Texinfo output ----------------------------------------------
 
@@ -159,7 +156,6 @@ texinfo_documents = [
      author, 'error-tracker', 'Error Tracker Modules for Flask, Django and Python',
      'Miscellaneous'),
 ]
-
 
 # -- Extension configuration -------------------------------------------------
 
