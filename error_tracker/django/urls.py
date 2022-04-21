@@ -6,11 +6,12 @@
 #    :license: BSD-3-Clause
 #
 
-from django.conf.urls import url
+from django.urls import path
 from .views import detail, view_list, delete_exception
 
+app_name = 'error_tracker'
 urlpatterns = [
-    url(r'^$', view_list, name="view_errors"),
-    url(r'^(?P<rhash>[\w-]+)/delete$', delete_exception, name='delete_error'),
-    url(r'^(?P<rhash>[\w-]+)$', detail, name='view_error'),
+    path('', view_list, name="view_errors"),
+    path('<rhash>/delete', delete_exception, name='delete_error'),
+    path('<rhash>', detail, name='view_error'),
 ]

@@ -42,13 +42,14 @@ def view_list(request):
     error = False
     errors = model.get_exceptions_per_page(**query)
    
-    next_url = reverse('view_errors') + "?page=" + str(errors.next_num) \
+    next_url = reverse('error_tracker:view_errors') + "?page=" + str(errors.next_num) \
         if errors.has_next else None
 
-    prev_url = reverse('view_errors') + "?page=" + str(errors.prev_num) \
+    prev_url = reverse('error_tracker:view_errors') + "?page=" + str(errors.prev_num) \
         if errors.has_prev else None
 
-    if request.is_ajax() or request.GET.get('ajax_partial'):
+    is_ajax = request.META.get('HTTP_X_REQUESTED_WITH') == 'XMLHttpRequest'
+    if is_ajax or request.GET.get('ajax_partial'):
         table = render_to_string('error_tracker/partials/partial_table.html', {
             'errors': errors,
         })
@@ -75,7 +76,7 @@ def delete_exception(request, rhash):
     :return: redirect back to home page
     """
     model.delete_entity(rhash)
-    return redirect(reverse('view_errors'))
+    return redirect(reverse('error_tracker:view_errors'))
 
 
 @require_GET
