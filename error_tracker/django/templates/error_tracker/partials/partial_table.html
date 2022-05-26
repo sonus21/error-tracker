@@ -4,7 +4,7 @@
             <td>{{ error.host }}</td>
             <td width="2%">{{ error.method }}</td>
             <td>
-                <a class="view-link" href="{% url 'view_error' rhash=error.hash %}">
+                <a class="view-link" href="{% url 'error_tracker:view_error' rhash=error.hash %}">
                     {{ error.path|truncatechars:30 }}
                 </a>
             </td>
@@ -12,7 +12,7 @@
             <td>{{ error.last_seen }}</td>
             <td>{{ error.count }}</td>
             <td>
-                <a href="{% url 'delete_error' rhash=error.hash %}"
+                <a href="{% url 'error_tracker:delete_error' rhash=error.hash %}"
                    class="delete btn btn-danger btn-sm">{%trans 'Delete' %}</a>
             </td>
         </tr>
