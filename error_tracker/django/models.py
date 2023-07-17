@@ -2,7 +2,7 @@
 #
 #    Django error tracker default model
 #
-#    :copyright: 2020 Sonu Kumar
+#    :copyright: 2023 Sonu Kumar
 #    :license: BSD-3-Clause
 #
 from django.core.paginator import Paginator, EmptyPage

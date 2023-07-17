@@ -2,11 +2,11 @@
 #
 #    Error Tracking app
 #
-#    :copyright: 2020 Sonu Kumar
+#    :copyright: 2023 Sonu Kumar
 #    :license: BSD-3-Clause
 #
 
-__version__ = '3.0.0'
+__version__ = '3.1.0'
 __author__ = 'Sonu Kumar'
 __email__ = 'sonunitw12@gmail.com'
 

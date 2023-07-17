@@ -2,7 +2,7 @@
 #
 #    Exception formatter that captures frame details in string format.
 #
-#    :copyright: 2020 Sonu Kumar
+#    :copyright: 2023 Sonu Kumar
 #    :license: BSD-3-Clause
 #
 
@@ -37,7 +37,7 @@ def convert_if_possible(x):
             return "QueryDict({%s})", x.dict()
     except ImportError:
         pass
-    return None, None
+    return None, x
 
 
 def format_frame(x, max_elements, max_string, max_recursion, masking=None):
@@ -168,8 +168,9 @@ def format_exception(tb, max_elements=1000,
                     w(val)
             if not masked:
                 try:
-                    w(format_frame(value, max_elements, max_string, max_recursion,
-                                   masking=masking))
+                    formatted_val = format_frame(value, max_elements, max_string, max_recursion,
+                                   masking=masking)
+                    w(formatted_val)
                 except Exception:
                     exc_class = sys.exc_info()[0]
                     w("<%s raised while printing value>" % exc_class)

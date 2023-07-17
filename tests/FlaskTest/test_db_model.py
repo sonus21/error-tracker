@@ -2,7 +2,7 @@
 #
 #    Test custom model features
 #
-#    :copyright: 2020 Sonu Kumar
+#    :copyright: 2023 Sonu Kumar
 #    :license: BSD-3-Clause
 #
 

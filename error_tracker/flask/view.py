@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 #     Exception formatter defaults view for flask app
 #
-#     :copyright: 2020 Sonu Kumar
+#     :copyright: 2023 Sonu Kumar
 #     :license: BSD-3-Clause
 #
 

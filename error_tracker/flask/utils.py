@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 #     Utils modules for flask plugin
 #
-#     :copyright: 2020 Sonu Kumar
+#     :copyright: 2023 Sonu Kumar
 #     :license: BSD-3-Clause
 #
 from error_tracker import ContextBuilderMixin, ViewPermissionMixin
