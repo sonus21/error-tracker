@@ -97,6 +97,7 @@ class TestCaseMixin(BaseTestMixin):
         app.config['SQLALCHEMY_DATABASE_URI'] = "sqlite:///%s" % db_file
         db = SQLAlchemy(app)
         error_tracker = AppErrorTracker(app=app, db=db, view_permission=ViewPermission(), **self.kwargs)
-        db.drop_all()
-        db.create_all()
+        with app.app_context():
+            db.drop_all()
+            db.create_all()
         return app, db, error_tracker

@@ -69,18 +69,19 @@ class ViewTest(TestCaseMixin):
             exception = error_tracker.get_exceptions()[0]
             hashx = exception.hash
             inserted = 0
-            i = 0
             while inserted < 20:
-                i += 1
-                idx = str(i) + hashx[2:]
                 inserted += 1
+                idx = str(inserted) + hashx[2:]
+                print("Inserting ", idx)
                 error_tracker.create_or_update_exception(idx, exception.host, exception.path,
                                                          exception.method, exception.request_data,
                                                          exception.exception_name,
                                                          exception.traceback)
 
+
             response = c.get('/dev/error', follow_redirects=True)
-            urls = [node.attrib['href'] for node in pyquery.PyQuery(response.data)('a')]
+            data = response.data
+            urls = [node.attrib['href'] for node in pyquery.PyQuery(data)('a')]
             self.assertEqual(len(urls), pagination_config.APP_DEFAULT_LIST_SIZE * 2 + 1)
             self.assertTrue('/dev/error/?page=2' in urls)
 

@@ -215,7 +215,7 @@ class AppErrorTracker(object):
             @classmethod
             def get_exceptions_per_page(cls, page_number=1):
                 return cls.query.order_by(desc(cls.last_seen)).paginate(
-                    page_number, page_size, False)
+                    page=page_number, per_page=page_size, error_out=False)
 
             @classmethod
             def get_entity(cls, rhash):
@@ -285,10 +285,11 @@ class AppErrorTracker(object):
 
         ty, frames, frame_str, traceback_str, rhash, request_data = \
             get_context_detail(rq, self.masking, self.context_builder, additional_context)
-        error = self.model.create_or_update_entity(rhash, host, path, method,
-                                                   str(request_data),
-                                                   get_exception_name(ty),
-                                                   traceback_str)
+        with self.app.app_context():
+            error = self.model.create_or_update_entity(rhash, host, path, method,
+                                                       str(request_data),
+                                                       get_exception_name(ty),
+                                                       traceback_str)
         self._post_process(rq, frame_str, frames, error)
 
     def auto_track_exception(self, func, additional_context=None, silent=False):
@@ -329,7 +330,8 @@ class AppErrorTracker(object):
         :return: list of exception objects
         """
         if self.model:
-            return self.model.get_exceptions_per_page(page_number=page_number).items
+            with self.app.app_context():
+                return self.model.get_exceptions_per_page(page_number=page_number).items
         raise ConfigError
 
     def get_exception(self, rhash):
@@ -339,7 +341,8 @@ class AppErrorTracker(object):
         :return:  exception object
         """
         if self.model:
-            return self.model.get_entity(rhash)
+            with self.app.app_context():
+                return self.model.get_entity(rhash)
         raise ConfigError
 
     def delete_exception(self, rhash):
@@ -349,12 +352,14 @@ class AppErrorTracker(object):
         :return:   whatever model returns
         """
         if self.model:
-            return self.model.delete_entity(rhash)
+            with self.app.app_context():
+                return self.model.delete_entity(rhash)
         raise ConfigError
 
     def create_or_update_exception(self, rhash, host, path, method, request_data,
                                    exception_name, traceback):
         if self.model:
-            return self.model.create_or_update_entity(rhash, host, path, method, request_data,
-                                                      exception_name, traceback)
+            with self.app.app_context():
+                return self.model.create_or_update_entity(rhash, host, path, method, request_data,
+                                                          exception_name, traceback)
         raise ConfigError

@@ -24,8 +24,9 @@ class InitLaterTest(BasicTest):
         db = SQLAlchemy(app)
         error_tracker = AppErrorTracker()
         error_tracker.init_app(app, db, view_permission=ViewPermission())
-        db.drop_all()
-        db.create_all()
+        with app.app_context():
+            db.drop_all()
+            db.create_all()
         return app, db, error_tracker
 
 
